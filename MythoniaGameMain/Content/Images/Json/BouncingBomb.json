@@ -1,0 +1,17 @@
+{
+  "Name": "BouncingBomb",
+  "A": "12, 12",
+  "FrameSize": "12, 12",
+  "Origin": "0, 0",
+
+  "FrameCount": 4,
+  "FramePerRow": 4,
+
+  "Animations": [
+    {
+      "Name": "Normal",
+      "FramesRange": [0, 3],//[ null, null ],
+      "FrameDuration": 5
+    }
+  ]
+}
