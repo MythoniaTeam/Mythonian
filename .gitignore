@@ -1,0 +1,7 @@
+# The-Call-of-Mythos
+!.gitignore
+
+*.cache
+.vs/
+obj/
+bin/
