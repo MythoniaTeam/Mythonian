@@ -65,7 +65,7 @@ namespace Mythonia.Game.TileMap
 
     public class Map : DrawableGameComponent, IEnumerable<Tile>
     {
-        public Main MGame => Game as Main;
+        public MGame MGame => Game as MGame;
 
         private readonly Tile[,] _tiles;
 
@@ -106,7 +106,7 @@ namespace Mythonia.Game.TileMap
 
         #region Constructor
 
-        public Map(Main game, Rectangle tilesize, Tile[,] tiles) : base(game)
+        public Map(MGame game, Rectangle tilesize, Tile[,] tiles) : base(game)
         {
             TileSize = tilesize;
             _tiles = tiles;
@@ -154,7 +154,7 @@ namespace Mythonia.Game.TileMap
         {
             foreach(var tile in this)
             {
-                if (tile != null) tile.Draw(MGame.SpriteBatch, MGame.MainGame.Camera);
+                if (tile != null) tile.Draw(MGame.SpriteBatch, MGame.Main.Camera);
                
             }
         }
@@ -162,7 +162,7 @@ namespace Mythonia.Game.TileMap
 
         #region Static Methods
 
-        public static Map StringToMap(Main game, Rectangle tilesize, string[] dataRows)
+        public static Map StringToMap(MGame game, Rectangle tilesize, string[] dataRows)
         {
             /*data = data.Replace("\r", "");
             data = data.Replace("\t", "");

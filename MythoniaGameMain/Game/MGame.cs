@@ -3,21 +3,21 @@
 
 namespace Mythonia.Game
 {
-    public class Main : XNA.Game
+    public class MGame : XNA.Game
     {
         public GraphicsDeviceManager Graphics { get; init; }
 
         public MTextureManager TextureManager { get; init; }
         public SpriteBatch SpriteBatch { get; set; }
 
-        public MainGame MainGame { get; set; }
+        public MGameMain Main { get; set; }
 
 
 
         public Rectangle TileSize { get; init; } = new(0, 0, 16, 16);
 
 
-        public Main() : base()
+        public MGame() : base()
         {
             Graphics = new(this);
             Content.RootDirectory = "Content";
@@ -36,7 +36,7 @@ namespace Mythonia.Game
             base.Initialize();
 
             SpriteBatch = new(GraphicsDevice);
-            MainGame = new(this, TileSize);
+            Main = new(this, TileSize);
 
             //tSprite = Content.Load<Texture2D>(@"Images\RECTANGLE");
 

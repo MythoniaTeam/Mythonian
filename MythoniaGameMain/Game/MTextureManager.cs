@@ -6,7 +6,7 @@ namespace Mythonia.Game
 {
     public class MTextureManager
     {
-        public Main MGame { get; init; }
+        public MGame MGame { get; init; }
 
         private readonly List<MTexture> _textures = new();
 
@@ -15,7 +15,7 @@ namespace Mythonia.Game
             get => _textures.Find(texture => texture.Name == name) ?? throw new Exception($"Texture \"{name}\" is not found");
         }
 
-        public MTextureManager(Main game)
+        public MTextureManager(MGame game)
         {
             MGame = game;
         }

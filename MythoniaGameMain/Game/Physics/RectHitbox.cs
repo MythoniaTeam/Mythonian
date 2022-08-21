@@ -6,7 +6,7 @@ namespace Mythonia.Game.Physics
 {
     public class RectHitbox : IHitbox
     {
-        public Main MGame { get; init; }
+        public MGame MGame { get; init; }
 
         public MVec2 Position => _getPosMethod();
 
@@ -15,7 +15,7 @@ namespace Mythonia.Game.Physics
         public MVec2 Size { get; set; }
 
 
-        public RectHitbox(Main game, Func<MVec2> getposmethod, MVec2 size)
+        public RectHitbox(MGame game, Func<MVec2> getposmethod, MVec2 size)
         {
             MGame = game;
             _getPosMethod = getposmethod;
@@ -35,7 +35,7 @@ namespace Mythonia.Game.Physics
         public void DrawHitbox(Color color)
         {
             var (scrPos, _, scale) =
-                MGame.MainGame.Camera.Transform(Position, scale: Size);
+                MGame.Main.Camera.Transform(Position, scale: Size);
             MGame.SpriteBatch.Draw(MGame.PX, scrPos, null, color, 0, new(0.5f, 0.5f), scale, SpriteEffects.None, 0);
         }
     }

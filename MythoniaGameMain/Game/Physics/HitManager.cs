@@ -6,14 +6,14 @@ namespace Mythonia.Game.Physics
 {
     public class HitManager : DrawableGameComponent
     {
-        public Main MGame => (Main)Game;
+        public MGame MGame => (MGame)Game;
 
         public List<RectHitbox> TileHitboxes { get; private set; } = new();
 
 
 
         private Texture2D px;
-        public HitManager(Main game, Map tilemap) : base(game)
+        public HitManager(MGame game, Map tilemap) : base(game)
         {
             px = game.Content.Load<Texture2D>("Images/PX");
             SetTileHitbox(tilemap);

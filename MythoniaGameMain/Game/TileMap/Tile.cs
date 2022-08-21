@@ -66,7 +66,7 @@ namespace Mythonia.Game.TileMap
 
         #region Constructor
 
-        private Tile(Main game, int id, Map map, MVec2 index) : base(game)
+        private Tile(MGame game, int id, Map map, MVec2 index) : base(game)
         {
             Id = id;
             _map = map;
@@ -78,10 +78,10 @@ namespace Mythonia.Game.TileMap
             //Texture = game.TextureManager[$"Tile_{Id}"];
         }
 
-        public static Tile? ConstructTile(Main game, char symbol, Map map, MVec2 index)
+        public static Tile? ConstructTile(MGame game, char symbol, Map map, MVec2 index)
             => ConstructTile(game, IdCharList.IndexOf(symbol), map, index);
 
-        public static Tile? ConstructTile(Main game, int id, Map map, MVec2 index)
+        public static Tile? ConstructTile(MGame game, int id, Map map, MVec2 index)
             => id is 0 ? null :
                 new(game, id, map, index);
         

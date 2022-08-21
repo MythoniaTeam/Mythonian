@@ -7,7 +7,7 @@ namespace MythoniaGameMain
         [STAThread]
         static void Main()
         {
-            using var game = new Main();
+            using var game = new Mythonia.Game.MGame();
             game.Run();
 
         }

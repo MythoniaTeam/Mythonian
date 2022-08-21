@@ -4,16 +4,19 @@
 
 namespace Mythonia.Game
 {
-    public class MainGame
+    /// <summary>
+    /// 封装存储大部分游戏对象, 与 <see cref="Game.MGame"/> 主循环分开
+    /// </summary>
+    public class MGameMain
     {
         public Map TileMap { get; set; }
         public HitManager HitManager { get; set; }
 
-        public Main MGame { get; init; }
+        public MGame MGame { get; init; }
 
         public Camera Camera { get; set; }
 
-        public MainGame(Main game, Rectangle tileSize)
+        public MGameMain(MGame game, Rectangle tileSize)
         {
             MGame = game;
             Camera = new(MGame, 0, 0);

@@ -9,7 +9,7 @@ namespace Mythonia.Game
 
         #region Props
 
-        public Main MGame { get; init; }
+        public MGame MGame { get; init; }
 
         public MVec3 Pos { get; set;  }
 
@@ -25,7 +25,7 @@ namespace Mythonia.Game
 
         #region Constructor
 
-        public Camera(Main game, float? x, float? y, float? z = null, float? focus = null, Angle? direction = null, float? scale = null)
+        public Camera(MGame game, float? x, float? y, float? z = null, float? focus = null, Angle? direction = null, float? scale = null)
         {
             MGame = game;
 

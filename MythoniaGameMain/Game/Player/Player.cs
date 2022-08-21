@@ -11,8 +11,8 @@ namespace Mythonia.Game.Player
 
         #region Prop
 
-        public Main MGame => (Main)Game;
-        public HitManager HitManager => MGame.MainGame.HitManager;
+        public MGame MGame => (MGame)Game;
+        public HitManager HitManager => MGame.Main.HitManager;
 
         public MTexture Texture { get; private set; }
 
@@ -49,7 +49,7 @@ namespace Mythonia.Game.Player
 
         #region Constructor
 
-        public Player(Main game) : base(game)
+        public Player(MGame game) : base(game)
         {
             Texture = game.TextureManager["TestPlayer"];
             Hitbox = new(MGame, () => Position, Texture.Size);
@@ -309,7 +309,7 @@ namespace Mythonia.Game.Player
         
         public override void Draw(GameTime gameTime)
         {
-            var (scrPos, _, _) = MGame.MainGame.Camera.Transform(Position);
+            var (scrPos, _, _) = MGame.Main.Camera.Transform(Position);
             MGame.SpriteBatch.Draw(Texture, scrPos, null, Color.White, 0, Texture.Size / 2, 1, SpriteEffects.None, 0);
 
 #if DEBUG
