@@ -1,14 +1,10 @@
-﻿using Mythonia.Game.TileMap;
-
-
-
-namespace Mythonia.Game.Physics
+﻿namespace Mythonia.Game.Physics
 {
     public class HitManager : DrawableGameComponent
     {
         public MGame MGame => (MGame)Game;
 
-        public List<RectHitbox> TileHitboxes { get; private set; } = new();
+        public List<RectangleHitbox> TileHitboxes { get; private set; } = new();
 
 
 
@@ -87,7 +83,7 @@ namespace Mythonia.Game.Physics
                         }
                     }
 
-                    var hitbox = new RectHitbox(MGame, () => ((indexTo + indexFr) / 2) * tilemap.TileSizeVec, (indexTo - indexFr + (1, 1)) * tilemap.TileSizeVec);
+                    var hitbox = new RectangleHitbox(MGame, () => ((indexTo + indexFr) / 2) * tilemap.TileSizeVec, (indexTo - indexFr + (1, 1)) * tilemap.TileSizeVec);
                     TileHitboxes.Add(hitbox);
 
                     //将碰撞体绑定在图格上
@@ -103,32 +99,61 @@ namespace Mythonia.Game.Physics
 
         #region Method - CheckColl
 
-        public static bool IsCollided(RectHitbox rect1, RectHitbox rect2)
+        public static bool IsHit(IHitbox h1, IHitbox h2)
+        {
+            if(h1 is RectangleHitbox rect1)
+            {
+                if (h2 is RectangleHitbox rect2)
+                {
+                    return IsHit(rect1, rect2);
+                }
+                else if (h2 is CircleHitbox cir2)
+                {
+                    return IsHit(rect1, cir2);
+                }
+            }
+            else if(h1 is CircleHitbox cir1)
+            {
+                if (h2 is RectangleHitbox rect2)
+                {
+                    return IsHit(cir1, rect2);
+                }
+                else if (h2 is CircleHitbox cir2)
+                {
+                    return IsHit(cir1, cir2);
+                }
+            }
+
+            //如果上面的语句没有匹配到合适的方法，说明传入了一个奇怪的类型(正常不会出现)
+            throw new Exception($"An Unknown IHitbox implement type is Given: h1 is [{h1.GetType()}], h2 is [{h2.GetType()}]");
+        }
+
+        public static bool IsHit(RectangleHitbox rect1, RectangleHitbox rect2)
             => (rect1.Position - rect2.Position).Abs < (rect1.Size + rect2.Size) / 2;
 
-        public static bool IsCollided(CircleHitbox cir1, CircleHitbox cir2)
-            => (cir1.Position - cir2.Position).LengthSquared() < (cir1.Radius + cir2.Radius) / 2;
+        public static bool IsHit(CircleHitbox circle1, CircleHitbox circle2)
+            => (circle1.Position - circle2.Position).LengthSquared() < (circle1.Radius + circle2.Radius) / 2;
 
-        public static bool IsCollided(CircleHitbox cir, RectHitbox rect)
+        public static bool IsHit(CircleHitbox circle, RectangleHitbox rect)
         {
-            MVec2 dis = (rect.Position - cir.Position).Abs;
+            MVec2 distance = (rect.Position - circle.Position).Abs;
             MVec2 rectSize = rect.Size / 2;
 
-            //1. 把 cir 视为矩形粗判定
-            if (dis >= rectSize + cir.Radius.ToVec()) return false;
+            //1. 把 circle 视为矩形粗判定
+            if (distance >= rectSize + circle.Radius.ToVec()) return false;
 
             //2. 因为!(1)已经证实两个矩形碰撞, 只要 X Y 距离 其中之一在矩形尺寸的范围内 => 圆形必定与矩形碰撞
-            else if (dis.X < rectSize.X || dis.Y < rectSize.Y) return true;
+            else if (distance.X < rectSize.X || distance.Y < rectSize.Y) return true;
 
             //3. 如果!(1)(2), 与圆形最近的是矩形的一个角, 距离 - 矩形尺寸 / 2 = 圆形到矩形最近角的距离, 与圆形半径作比较
-            else if ((dis - rectSize).LengthSquared() < MathF.Pow(cir.Radius, 2)) return true;
+            else if ((distance - rectSize).LengthSquared() < MathF.Pow(circle.Radius, 2)) return true;
 
             //4. 否则不碰撞
             else return false;
 
         }
 
-        public static bool IsCollided(RectHitbox rect, CircleHitbox cir) => IsCollided(cir, rect);
+        public static bool IsHit(RectangleHitbox rect, CircleHitbox circle) => IsHit(circle, rect);
 
         #endregion
 
@@ -143,12 +168,12 @@ namespace Mythonia.Game.Physics
         /// <item><term>不碰撞</term> <description><see langword="null"/></description></item>
         /// </list>
         /// </returns>
-        public IList<RectHitbox> IsCollidedWithTile(RectHitbox hitbox)
+        public IList<RectangleHitbox> GetHitTile(RectangleHitbox hitbox)
         {
-            List<RectHitbox> hitboxes = new();
+            List<RectangleHitbox> hitboxes = new();
             foreach(var tileHitbox in TileHitboxes)
             {
-                if (IsCollided(hitbox, tileHitbox)) hitboxes.Add(tileHitbox);
+                if (IsHit(hitbox, tileHitbox)) hitboxes.Add(tileHitbox);
             }
             return hitboxes.IsEmpty() ? null : hitboxes;
         }

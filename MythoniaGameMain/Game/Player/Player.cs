@@ -24,11 +24,11 @@ namespace Mythonia.Game.Player
         public MVec2 Velocity { get => _velocity; set => _velocity = value; }
         private MVec2 _velocity = (0, 0);
 
-        public RectHitbox HitboxFoot { get; private set; }
-        public RectHitbox Hitbox { get; private set; }
+        public RectangleHitbox HitboxFoot { get; private set; }
+        public RectangleHitbox Hitbox { get; private set; }
 
         public bool OnGround { get; private set; }
-        public IList<RectHitbox> OnHitbox { get; private set; }
+        public IList<RectangleHitbox> OnHitbox { get; private set; }
 
         public float JumpKeyPressTime = -1;
         public bool WalkKeyPressed = false;
@@ -103,7 +103,7 @@ namespace Mythonia.Game.Player
         {
             
 
-            if (HitManager.IsCollidedWithTile(HitboxFoot) is IList<RectHitbox> ground)
+            if (HitManager.GetHitTile(HitboxFoot) is IList<RectangleHitbox> ground)
             {
                 OnHitbox = ground;
                 OnGround = true;
@@ -209,7 +209,7 @@ namespace Mythonia.Game.Player
             _position += vel;
 
             //检查碰撞
-            var hitboxes = HitManager.IsCollidedWithTile(Hitbox);
+            var hitboxes = HitManager.GetHitTile(Hitbox);
             //如果存在碰撞
             if (hitboxes is not null)
             {
@@ -236,21 +236,21 @@ namespace Mythonia.Game.Player
         }
 
         /// <summary>
-        /// 遍历 <paramref name="hitboxes"/> 内的所有 <see cref="RectHitbox"/>,<br/>
-        /// 检测当前坐标 (<see cref="DichotomyMoveX(float, RectHitbox)"/> 后), 是否与其他碰撞体碰撞
+        /// 遍历 <paramref name="hitboxes"/> 内的所有 <see cref="RectangleHitbox"/>,<br/>
+        /// 检测当前坐标 (<see cref="DichotomyMoveX(float, RectangleHitbox)"/> 后), 是否与其他碰撞体碰撞
         /// </summary>
         /// <param name="hitboxes"></param>
         /// <param name="posTemp"></param>
         /// <param name="vel"></param>
-        private void CheckMove(IList<RectHitbox> hitboxes, MVec2 posTemp, MVec2 vel)
+        private void CheckMove(IList<RectangleHitbox> hitboxes, MVec2 posTemp, MVec2 vel)
         {
-            List<RectHitbox> removeList = new();
+            List<RectangleHitbox> removeList = new();
 
             //遍历所有碰撞体
             foreach (var hitbox in hitboxes)
             {
                 //如果仍然碰撞
-                if (HitManager.IsCollided(Hitbox, hitbox))
+                if (HitManager.IsHit(Hitbox, hitbox))
                 {
                     //位置重置
                     _position = posTemp;
@@ -277,18 +277,18 @@ namespace Mythonia.Game.Player
         /// </summary>
         /// <param name="vel"></param>
         /// <param name="hitbox"></param>
-        private void DichotomyMove(MVec2 vel, RectHitbox hitbox)
+        private void DichotomyMove(MVec2 vel, RectangleHitbox hitbox)
         {
             if (MathF.Abs(vel.LengthSquared()) < 0.01f)
             {
                 //如果 | vel | < 0.1, 退后 整个vel, 结束递归
-                if (HitManager.IsCollided(hitbox, Hitbox))
+                if (HitManager.IsHit(hitbox, Hitbox))
                     _position -= vel;
                 return;
             }
 
             vel /= 2.0f;
-            if (HitManager.IsCollided(hitbox, Hitbox))
+            if (HitManager.IsHit(hitbox, Hitbox))
             {
                 //如果碰到了, 退后 一半vel
                 _position -= vel;
