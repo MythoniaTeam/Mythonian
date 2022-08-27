@@ -24,7 +24,7 @@ namespace Mythonia.Game.TileMap
             }
         }
 
-        public List<IHitbox> Hitboxes = new();
+        public RectangleHitbox Hitbox { get; set; }
 
         public MVec2 Position => MapIndex * Map.TileSizeVec;
 

@@ -84,11 +84,11 @@ namespace Mythonia.Game.TileMap
         {
             get
             {
-                try
+                if(x >= 0 && x < _tiles.GetLength(0) && y >= 0 && y < _tiles.GetLength(1))
                 {
                     return _tiles[x, y];
                 }
-                catch (Exception)
+                else
                 {
                     return null;
                 }
@@ -194,7 +194,7 @@ namespace Mythonia.Game.TileMap
                     //将碰撞体绑定在图格上
                     foreach (var tileInclude in tilesInclude)
                     {
-                        tileInclude.Hitboxes.Add(hitbox);
+                        tileInclude.Hitbox = hitbox;
                     }
                 }
             }
@@ -248,13 +248,24 @@ namespace Mythonia.Game.TileMap
 #if DEBUG
             if (MDebug.DrawTilesHitbox)
             {
-                Color color = new(100, 20, 20, 150);
+                Color color;
+                int j = 0;
                 foreach (var hitbox in MapHitboxes)
                 {
-                    color.R += (byte)(155 / MapHitboxes.Count);
-                    color.G += (byte)(140 / MapHitboxes.Count);
-                    color.B += (byte)(140 / MapHitboxes.Count);
+                    int i = j * 10;
+                    color = (j % 7) switch
+                    {
+                        0 => new(100 + i % 155, 50 + i % 155, 50 + i % 155),
+                        1 => new(50 + i % 155, 100 + i % 155, 50 + i % 155),
+                        2 => new(50 + i % 155, 50 + i % 155, 100 + i % 155),
+                        3 => new(100 + i % 155, 100 + i % 155, 50 + i % 155),
+                        4 => new(100 + i % 155, 50 + i % 155, 100 + i % 155),
+                        5 => new(50 + i % 155, 100 + i % 155, 100 + i % 155),
+                        6 => new(100 + i % 155, 100 + i % 155, 100 + i % 155),
+                    };
+                    color = new(color, 150);
                     hitbox.DrawHitbox(color);
+                    j++;
                 }
             }
 #endif
