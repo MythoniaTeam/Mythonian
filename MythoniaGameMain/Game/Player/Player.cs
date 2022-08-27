@@ -113,8 +113,8 @@ namespace Mythonia.Game.Player
             else
             {
                 OnGround = false;
-                _velocity.Y += Gravity;
             }
+            _velocity.Y += Gravity;
 
 
             KeyboardState key = Keyboard.GetState();

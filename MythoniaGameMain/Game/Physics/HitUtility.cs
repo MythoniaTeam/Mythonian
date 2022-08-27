@@ -76,12 +76,38 @@
         /// </returns>
         public static IList<RectangleHitbox> GetHitTile(Map map, RectangleHitbox hitbox)
         {
-            List<RectangleHitbox> hitboxes = new();
-            foreach(var tileHitbox in map.MapHitboxes)
+            MVec2 blTilePos = hitbox.BottomLeft / map.TileSizeVec;
+            blTilePos.Floor();
+            MVec2 trTilePos = hitbox.TopRight / map.TileSizeVec;
+            trTilePos.Ceiling();
+
+            List<RectangleHitbox> checkedHitboxes = new();
+            List<RectangleHitbox> hitHitboxes = new();
+            int trX = (int)trTilePos.X;
+            int trY = (int)trTilePos.Y;
+            for (int x = (int)blTilePos.X; x <= trX; x++)
             {
-                if (IsHit(hitbox, tileHitbox)) hitboxes.Add(tileHitbox);
+                for(int y = (int)blTilePos.Y; y <= trY; y++)
+                {
+                    if (map[x, y] != null)
+                    {
+                        var tileHitbox = map[x, y].Hitbox;
+                        if (!checkedHitboxes.Contains(tileHitbox))
+                        {
+                            checkedHitboxes.Add(tileHitbox);
+                            if (IsHit(hitbox, tileHitbox)) hitHitboxes.Add(tileHitbox);
+                        }
+                    }
+                    
+                    
+                }
             }
-            return hitboxes.IsEmpty() ? null : hitboxes;
+            //List<RectangleHitbox> hitHitboxes = new();
+            /*foreach (var tileHitbox in map.MapHitboxes)
+            {
+                if (IsHit(hitbox, tileHitbox)) hitHitboxes.Add(tileHitbox);
+            }*/
+            return hitHitboxes.IsEmpty() ? null : hitHitboxes;
         }
 
         
