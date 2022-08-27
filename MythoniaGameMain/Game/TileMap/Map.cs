@@ -76,6 +76,8 @@ namespace Mythonia.Game.TileMap
         public Rectangle TileSize { get; init; }
         public MVec2 TileSizeVec => TileSize.Size;
 
+        public List<RectangleHitbox> MapHitboxes { get; private set; } = new();
+
 
 
         public Tile this[int x, int y]
@@ -106,7 +108,7 @@ namespace Mythonia.Game.TileMap
 
         #region Constructor
 
-        public Map(MGame game, Rectangle tilesize, Tile[,] tiles) : base(game)
+        private Map(MGame game, Rectangle tilesize, Tile[,] tiles) : base(game)
         {
             TileSize = tilesize;
             _tiles = tiles;
@@ -117,6 +119,88 @@ namespace Mythonia.Game.TileMap
 
 
         #region Methods
+
+        private void SetTileHitbox()
+        {
+            bool[,] tileChecked = new bool[Width, Height];
+
+            //遍历每一个图格
+            foreach (var tile in this)
+            {
+                //如果图格已经检查过了, 跳过当前图格
+                if (tile is null || tileChecked[(int)tile.MapIndex.X, (int)tile.MapIndex.Y]) continue;
+
+
+                MVec2 indexFr = tile.MapIndex;
+                MVec2 indexTo = tile.MapIndex;
+                List<Tile> tilesInclude = new();
+
+
+                var tile2 = tile;
+
+                //遍历 x 直到边缘, 或直到没有碰撞体
+                while (tile2?.HasColl ?? false)
+                {
+                    indexTo.X++;
+                    tileChecked[(int)tile2.MapIndex.X, (int)tile2.MapIndex.Y] = true;
+                    tilesInclude.Add(tile2);
+                    tile2 = tile2.TileRight;
+                }
+
+                indexTo.X--;
+
+                if (indexTo.X >= indexFr.X)
+                {
+                    //如果范围内至少包含一个图格 To >= Fr
+
+                    //遍历 y 直到达到边缘, 或者跳出循环 (breakWhild)
+                    bool breakWhile = false;
+                    for (int y = (int)indexFr.Y + 1; y < Height && !breakWhile; y++)
+                    {
+                        //如果下一层左右都有别的图格, 跳出循环
+                        if ((this[(int)indexFr.X, y]?.TileLeft?.HasColl ?? false) &&
+                            (this[(int)indexTo.X, y]?.TileRight?.HasColl ?? false))
+                        {
+                            indexTo.Y = y - 1;
+                            breakWhile = true;
+                            break;
+                        }
+
+                        //遍历 x, 如果有任意一个 x 没有碰撞体, 跳出循环
+                        for (int x = (int)indexFr.X; x <= (int)indexTo.X; x++)
+                        {
+                            if (!(this[x, y]?.HasColl ?? false))
+                            {
+                                indexTo.Y = y - 1;
+                                breakWhile = true;
+                                break;
+                            }
+                        }
+
+                        //如果没有break, 把这些砖块设为checked
+                        if (!breakWhile)
+                        {
+                            for (int x = (int)indexFr.X; x <= (int)indexTo.X; x++)
+                            {
+                                tileChecked[x, y] = true;
+                                tilesInclude.Add(this[x, y]);
+                            }
+                        }
+                    }
+
+                    var hitbox = new RectangleHitbox(MGame, () => ((indexTo + indexFr) / 2) * TileSizeVec, (indexTo - indexFr + (1, 1)) * TileSizeVec);
+                    MapHitboxes.Add(hitbox);
+
+                    //将碰撞体绑定在图格上
+                    foreach (var tileInclude in tilesInclude)
+                    {
+                        tileInclude.Hitboxes.Add(hitbox);
+                    }
+                }
+            }
+        }
+
+
 
         /// <summary>
         /// 给定一个 <seealso cref="Tile"/> <paramref name="tile"/>，返回该 <see cref="Tile"/> 于该 <see cref="Map"/> 中的下标
@@ -149,14 +233,31 @@ namespace Mythonia.Game.TileMap
             }
         }
 
+        public override void Initialize()
+        {
+            SetTileHitbox();
+        }
 
         public override void Draw(GameTime gameTime)
         {
-            foreach(var tile in this)
+            foreach (var tile in this)
             {
                 if (tile != null) tile.Draw(MGame.SpriteBatch, MGame.Main.Camera);
-               
+
             }
+#if DEBUG
+            if (MDebug.DrawTilesHitbox)
+            {
+                Color color = new(100, 20, 20, 150);
+                foreach (var hitbox in MapHitboxes)
+                {
+                    color.R += (byte)(155 / MapHitboxes.Count);
+                    color.G += (byte)(140 / MapHitboxes.Count);
+                    color.B += (byte)(140 / MapHitboxes.Count);
+                    hitbox.DrawHitbox(color);
+                }
+            }
+#endif
         }
 
 
@@ -188,6 +289,7 @@ namespace Mythonia.Game.TileMap
                 }
             }
             map.UpdateTileTexture();
+            map.Initialize();
 
             return map;
         }

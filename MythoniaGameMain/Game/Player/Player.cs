@@ -12,7 +12,7 @@ namespace Mythonia.Game.Player
         #region Prop
 
         public MGame MGame => (MGame)Game;
-        public HitManager HitManager => MGame.Main.HitManager;
+        public Map Map => MGame.Main.TileMap;
 
         public MTexture Texture { get; private set; }
 
@@ -36,8 +36,9 @@ namespace Mythonia.Game.Player
 
         private const float Acc = 0.4f;
         private const float Gravity = -0.4f;
-        private const float JumpAcc = 0.7f;
-        private const float JumpInitSpd = 8;
+        private const float JumpAcc = 0.3f;
+        private const float JumpKeyPressAcc = 0.45f;
+        private const float JumpInitSpd = 6.6f;
         private const float JumpAccTime = 15;
         private const float Resis = 0.89f;
 
@@ -103,7 +104,7 @@ namespace Mythonia.Game.Player
         {
             
 
-            if (HitManager.GetHitTile(HitboxFoot) is IList<RectangleHitbox> ground)
+            if (HitUtility.GetHitTile(Map, HitboxFoot) is IList<RectangleHitbox> ground)
             {
                 OnHitbox = ground;
                 OnGround = true;
@@ -137,30 +138,32 @@ namespace Mythonia.Game.Player
                     _velocity.Y = JumpInitSpd;
                     JumpKeyPressTime = 0;
                 }
+            }
 
-                //如果 按下跳跃键 (>=0), 且按键时间 < JumpAccTime
-                //不在地面, 且正在向上移动 (y 速度 > 0)
-                else if (JumpKeyPressTime is >= 0 and < JumpAccTime && _velocity.Y > 0)
-                {
-                    //如果本帧加速后，总加速时长超出上限，只增加剩余的部分
-                    if (JumpKeyPressTime + gameTime.CFDuration() >= JumpAccTime)
-                    {
-                        _velocity.Y += JumpAcc * (JumpAccTime - JumpKeyPressTime);
-                    }
-                    //否则增加 JumpAcc
-                    else
-                    {
-                        _velocity.Y += JumpAcc * gameTime.CFDuration();
-                    }
-                    //增加按键时间    
-                    JumpKeyPressTime += gameTime.CFDuration();
-                }
-            }
-            else
+
+
+            //如果 按下跳跃键 (>=0), 且按键时间 < JumpAccTime
+            //不在地面, 且正在向上移动 (y 速度 > 0)
+            if (JumpKeyPressTime is >= 0 and < JumpAccTime && _velocity.Y > 0)
             {
-                //如果不按下跳跃键, 将按键时间设为 -1
-                if (JumpKeyPressTime >= 0) JumpKeyPressTime = -1;
+                //如果本帧加速后，总加速时长超出上限，只增加剩余的部分
+                if (JumpKeyPressTime + gameTime.CFDuration() >= JumpAccTime)
+                {
+                    _velocity.Y += 
+                        (JumpAcc + (key.IsKeyDown(Keys.W) ? JumpKeyPressAcc : 0))
+                        * (JumpAccTime - JumpKeyPressTime);
+                }
+                //否则增加 JumpAcc
+                {
+                    _velocity.Y += 
+                        (JumpAcc + (key.IsKeyDown(Keys.W) ? JumpKeyPressAcc : 0))
+                        * gameTime.CFDuration();
+                    //增加按键时间    
+                }
+                JumpKeyPressTime += gameTime.CFDuration();
             }
+            if (JumpKeyPressTime >= JumpAccTime)
+                JumpKeyPressTime = -1;
 
             WalkKeyPressed = false;
             if (key.IsKeyDown(Keys.A))
@@ -209,7 +212,7 @@ namespace Mythonia.Game.Player
             _position += vel;
 
             //检查碰撞
-            var hitboxes = HitManager.GetHitTile(Hitbox);
+            var hitboxes = HitUtility.GetHitTile(Map, Hitbox);
             //如果存在碰撞
             if (hitboxes is not null)
             {
@@ -250,7 +253,7 @@ namespace Mythonia.Game.Player
             foreach (var hitbox in hitboxes)
             {
                 //如果仍然碰撞
-                if (HitManager.IsHit(Hitbox, hitbox))
+                if (HitUtility.IsHit(Hitbox, hitbox))
                 {
                     //位置重置
                     _position = posTemp;
@@ -282,13 +285,13 @@ namespace Mythonia.Game.Player
             if (MathF.Abs(vel.LengthSquared()) < 0.01f)
             {
                 //如果 | vel | < 0.1, 退后 整个vel, 结束递归
-                if (HitManager.IsHit(hitbox, Hitbox))
+                if (HitUtility.IsHit(hitbox, Hitbox))
                     _position -= vel;
                 return;
             }
 
             vel /= 2.0f;
-            if (HitManager.IsHit(hitbox, Hitbox))
+            if (HitUtility.IsHit(hitbox, Hitbox))
             {
                 //如果碰到了, 退后 一半vel
                 _position -= vel;
