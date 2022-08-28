@@ -4,7 +4,7 @@
 
 namespace Mythonia.Game.Physics
 {
-    public class RectHitbox : IHitbox
+    public class RectangleHitbox : IHitbox
     {
         public MGame MGame { get; init; }
 
@@ -15,7 +15,11 @@ namespace Mythonia.Game.Physics
         public MVec2 Size { get; set; }
 
 
-        public RectHitbox(MGame game, Func<MVec2> getposmethod, MVec2 size)
+        public MVec2 BottomLeft => Position - Size / 2;
+        public MVec2 TopRight => Position + Size / 2;
+
+
+        public RectangleHitbox(MGame game, Func<MVec2> getposmethod, MVec2 size)
         {
             MGame = game;
             _getPosMethod = getposmethod;
