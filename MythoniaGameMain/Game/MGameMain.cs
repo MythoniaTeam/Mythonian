@@ -10,7 +10,6 @@ namespace Mythonia.Game
     public class MGameMain
     {
         public Map TileMap { get; set; }
-        public HitManager HitManager { get; set; }
 
         public MGame MGame { get; init; }
 
@@ -32,11 +31,9 @@ namespace Mythonia.Game
                 @" ##    #####        ",
                 @"##                  ",
             });
-            HitManager = new(MGame, TileMap);
 
             MGame.Components.Add(TileMap);
             MGame.Components.Add(new Player.Player(MGame));
-            MGame.Components.Add(HitManager);
         }
     }
 }
