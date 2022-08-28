@@ -101,7 +101,7 @@ namespace Mythonia.Game.Player
 
         public override void Update(GameTime gameTime)
         {
-            
+            base.Update(gameTime);
 
             if (HitManager.GetHitTile(HitboxFoot) is IList<RectangleHitbox> ground)
             {
@@ -112,7 +112,7 @@ namespace Mythonia.Game.Player
             else
             {
                 OnGround = false;
-                _velocity.Y += Gravity;
+                _velocity.Y += Gravity * gameTime.CFDuration();
             }
 
 
@@ -152,7 +152,7 @@ namespace Mythonia.Game.Player
                     {
                         _velocity.Y += JumpAcc * gameTime.CFDuration();
                     }
-                    //增加按键时间    
+                    //增加按键时间
                     JumpKeyPressTime += gameTime.CFDuration();
                 }
             }
