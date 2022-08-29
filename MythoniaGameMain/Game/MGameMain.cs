@@ -23,7 +23,7 @@ namespace Mythonia.Game
 
             Player = new Player.Player(MGame);
 
-            Camera = new(MGame, Player, 0, 0);
+            Camera = new(MGame, 0, 0);
 
             TileMap = Map.StringToMap(MGame, tileSize, new string[]
             {
@@ -40,7 +40,6 @@ namespace Mythonia.Game
             MGame.Components.Add(Camera);
             MGame.Components.Add(TileMap);
             MGame.Components.Add(Player);
-            MGame.Components.Add(HitManager);
         }
     }
 }

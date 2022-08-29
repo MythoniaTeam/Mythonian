@@ -32,7 +32,7 @@ namespace Mythonia.Game
 
         #region Constructor
 
-        public Camera(MGame game, Player.Player player, float? x, float? y, float? z = null, float? focus = null, Angle? direction = null, float? scale = null) : base(game)
+        public Camera(MGame game, float? x, float? y, float? z = null, float? focus = null, Angle? direction = null, float? scale = null) : base(game)
         {
             MGame = game;
 
@@ -41,7 +41,7 @@ namespace Mythonia.Game
             Focus = focus ?? 100;
             Pos = new MVec3(x ?? 0, y ?? 0, z ?? 2 * Focus);
             Target = Pos;
-            _player = player;
+            _player = MGame.Main.Player;
         }
 
         #endregion
