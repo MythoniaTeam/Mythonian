@@ -40,7 +40,6 @@ namespace Mythonia.Game
             MGame.Components.Add(Camera);
             MGame.Components.Add(TileMap);
             MGame.Components.Add(Player);
-            MGame.Components.Add(HitManager);
         }
     }
 }
