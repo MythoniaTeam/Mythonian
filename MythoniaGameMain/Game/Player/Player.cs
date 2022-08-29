@@ -35,12 +35,13 @@ namespace Mythonia.Game.Player
 
 
         private const float Acc = 0.4f;
-        private const float Gravity = -0.4f;
-        private const float JumpAcc = 0.3f;
-        private const float JumpKeyPressAcc = 0.45f;
-        private const float JumpInitSpd = 6.6f;
-        private const float JumpAccTime = 15;
-        private const float Resis = 0.89f;
+        private const float Gravity = -0.48f;
+        private const float JumpAcc = 0.42f;
+        private const float JumpKeyPressAcc = 0.5f;
+        private const float JumpInitSpd = 8f;
+        private const float JumpAccTime = 20;
+        private const float Resis = 0.94f;
+        private const float ResisX = 0.89f;
 
         #endregion Prop - Physics
 
@@ -193,7 +194,8 @@ namespace Mythonia.Game.Player
             {
                 _velocity.Y = 0;
             }
-            _velocity *= Resis;
+            _velocity.X *= ResisX;
+            _velocity.Y *= Resis;
         }
 
         /// <summary>
