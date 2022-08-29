@@ -24,8 +24,6 @@ namespace Mythonia.Game
 
         public bool FollowPlayer { get; set; } = true;
 
-        private readonly Player.Player _player;
-
         #endregion
 
 
@@ -41,7 +39,6 @@ namespace Mythonia.Game
             Focus = focus ?? 100;
             Pos = new MVec3(x ?? 0, y ?? 0, z ?? 2 * Focus);
             Target = Pos;
-            _player = MGame.Main.Player;
         }
 
         #endregion
@@ -72,6 +69,8 @@ namespace Mythonia.Game
             if (FollowPlayer)
             {
                 MVec3 c;
+
+                Player.Player _player = MGame.Main.Player;
 
                 if (_player.Velocity.Length() == 0f)
                 {
