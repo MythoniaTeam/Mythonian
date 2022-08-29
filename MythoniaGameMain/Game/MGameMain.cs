@@ -13,12 +13,17 @@ namespace Mythonia.Game
 
         public MGame MGame { get; init; }
 
+        public Player.Player Player { get; set; }
+
         public Camera Camera { get; set; }
 
         public MGameMain(MGame game, Rectangle tileSize)
         {
             MGame = game;
-            Camera = new(MGame, 0, 0);
+
+            Player = new Player.Player(MGame);
+
+            Camera = new(MGame, Player, 0, 0);
 
             TileMap = Map.StringToMap(MGame, tileSize, new string[]
             {
@@ -32,8 +37,10 @@ namespace Mythonia.Game
                 @"##                  ",
             });
 
+            MGame.Components.Add(Camera);
             MGame.Components.Add(TileMap);
-            MGame.Components.Add(new Player.Player(MGame));
+            MGame.Components.Add(Player);
+            MGame.Components.Add(HitManager);
         }
     }
 }

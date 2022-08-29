@@ -102,7 +102,7 @@ namespace Mythonia.Game.Player
 
         public override void Update(GameTime gameTime)
         {
-            
+            base.Update(gameTime);
 
             if (HitUtility.GetHitTile(Map, HitboxFoot) is IList<RectangleHitbox> ground)
             {
@@ -113,6 +113,7 @@ namespace Mythonia.Game.Player
             else
             {
                 OnGround = false;
+                _velocity.Y += Gravity * gameTime.CFDuration();
             }
             _velocity.Y += Gravity;
 
@@ -149,6 +150,7 @@ namespace Mythonia.Game.Player
                 //如果本帧加速后，总加速时长超出上限，只增加剩余的部分
                 if (JumpKeyPressTime + gameTime.CFDuration() >= JumpAccTime)
                 {
+
                     _velocity.Y += 
                         (JumpAcc + (key.IsKeyDown(Keys.W) ? JumpKeyPressAcc : 0))
                         * (JumpAccTime - JumpKeyPressTime);
