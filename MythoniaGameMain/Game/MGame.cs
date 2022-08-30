@@ -66,7 +66,7 @@ namespace Mythonia.Game
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(new(0,10,30));
+            GraphicsDevice.Clear(new(0, 10, 30));
 
             SpriteBatch.Begin();
 
