@@ -70,8 +70,9 @@ namespace Mythonia.Game.Player
 #if DEBUG
         private bool _f11Down = false;
         private bool _f10Down = false;
-        private void DebugUpdate(KeyboardState key)
+        private void DebugUpdate()
         {
+            KeyboardState key = Keyboard.GetState();
             if (key.IsKeyDown(Keys.F10))
             {
                 if (!_f10Down)
@@ -96,6 +97,11 @@ namespace Mythonia.Game.Player
             {
                 _f11Down = false;
             }
+            if (key.IsKeyDown(Keys.R))
+            {
+                Position = (0, 20);
+                Velocity = (0, 0);
+            }
         }
 #endif
 
@@ -119,20 +125,13 @@ namespace Mythonia.Game.Player
             _velocity.Y += Gravity;
 
 
-            KeyboardState key = Keyboard.GetState();
-
 #if DEBUG
-            DebugUpdate(key);
+            DebugUpdate();
 #endif
 
-            if (key.IsKeyDown(Keys.R))
-            {
-                Position = (0, 20);
-                Velocity = (0, 0);
-            }
+            Input input = MGame.Main.Input;
 
-
-            if (key.IsKeyDown(Keys.W))
+            if (input.KeyDown(Key.Jump))
             {
                 //如果在地面上, 将速度设为 JumpInitSpd, 按键时间设为 0 表示开始按键 (平时是 -1)
                 if (OnGround)
@@ -153,13 +152,13 @@ namespace Mythonia.Game.Player
                 {
 
                     _velocity.Y += 
-                        (JumpAcc + (key.IsKeyDown(Keys.W) ? JumpKeyPressAcc : 0))
+                        (JumpAcc + (input.KeyDown(Key.Jump) ? JumpKeyPressAcc : 0))
                         * (JumpAccTime - JumpKeyPressTime);
                 }
                 //否则增加 JumpAcc
                 {
                     _velocity.Y += 
-                        (JumpAcc + (key.IsKeyDown(Keys.W) ? JumpKeyPressAcc : 0))
+                        (JumpAcc + (input.KeyDown(Key.Jump) ? JumpKeyPressAcc : 0))
                         * gameTime.CFDuration();
                     //增加按键时间    
                 }
@@ -169,12 +168,12 @@ namespace Mythonia.Game.Player
                 JumpKeyPressTime = -1;
 
             WalkKeyPressed = false;
-            if (key.IsKeyDown(Keys.A))
+            if (input.KeyDown(Key.Left))
             {
                 _velocity.X -= Acc * gameTime.CFDuration();
                 WalkKeyPressed = true;
             }
-            if (key.IsKeyDown(Keys.D))
+            if (input.KeyDown(Key.Right))
             {
                 _velocity.X += Acc * gameTime.CFDuration();
                 WalkKeyPressed = true;

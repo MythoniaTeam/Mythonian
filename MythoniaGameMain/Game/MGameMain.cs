@@ -9,21 +9,33 @@ namespace Mythonia.Game
     /// </summary>
     public class MGameMain
     {
+
+        public Camera Camera { get; set; }
+
+        public Input Input { get; set; }
+
         public Map TileMap { get; set; }
 
         public MGame MGame { get; init; }
 
         public Player.Player Player { get; set; }
 
-        public Camera Camera { get; set; }
-
         public MGameMain(MGame game, Rectangle tileSize)
         {
             MGame = game;
 
-            Player = new Player.Player(MGame);
-
             Camera = new(MGame, 0, 0);
+
+            Input = new(MGame, new Keys[] {
+                Keys.A,
+                Keys.D,
+                Keys.W,
+                Keys.S,
+                Keys.L,
+                Keys.K
+            });
+
+            Player = new Player.Player(MGame);
 
             TileMap = Map.StringToMap(MGame, tileSize, new string[]
             {
@@ -38,6 +50,7 @@ namespace Mythonia.Game
             });
 
             MGame.Components.Add(Camera);
+            MGame.Components.Add(Input);
             MGame.Components.Add(TileMap);
             MGame.Components.Add(Player);
         }
