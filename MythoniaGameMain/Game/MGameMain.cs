@@ -27,14 +27,14 @@ namespace Mythonia.Game
 
             TileMap = Map.StringToMap(MGame, tileSize, new string[]
             {
-                @"   ####             ",
-                @"     |      ###     ",
-                @"     |       |      ",
-                @"     |       |      ",
-                @"     |      ######  ",
-                @"  ######   ##       ",
-                @" ##    #####        ",
-                @"##                  ",
+                @"   ####            ##   ",
+                @"     |             #    ",
+                @"     |             ##   ",
+                @"     |             #    ",
+                @"     |             ##   ",
+                @"  ######           #    ",
+                @" ##    ##############   ",
+                @"##                 #### ",
             });
 
             MGame.Components.Add(Camera);

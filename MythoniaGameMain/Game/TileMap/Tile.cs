@@ -294,8 +294,8 @@ namespace Mythonia.Game.TileMap
                 (TextureConnectable(TileTopRight), TextureConnectable(TileBottomRight)) switch
                 {
                     (true, true) => TextureBorderExtend.L,
-                    (true, false) => TextureBorderExtend.L_AgTR,//右上不连接
-                    (false, true) => TextureBorderExtend.L_AgBR,//右下不连接
+                    (true, false) => TextureBorderExtend.L_AgBR,//右上不连接
+                    (false, true) => TextureBorderExtend.L_AgTR,//右下不连接
                     (false, false) => TextureBorderExtend.L_AgBoth,
                 },
 
@@ -303,8 +303,8 @@ namespace Mythonia.Game.TileMap
                 (TextureConnectable(TileTopLeft), TextureConnectable(TileBottomLeft)) switch
                 {
                     (true, true) => TextureBorderExtend.R,
-                    (true, false) => TextureBorderExtend.R_AgTL,//左上不连接
-                    (false, true) => TextureBorderExtend.R_AgBL,//左下不连接
+                    (true, false) => TextureBorderExtend.R_AgBL,//左上不连接
+                    (false, true) => TextureBorderExtend.R_AgTL,//左下不连接
                     (false, false) => TextureBorderExtend.R_AgBoth,
                 },
 
@@ -312,8 +312,8 @@ namespace Mythonia.Game.TileMap
                 (TextureConnectable(TileTopLeft), TextureConnectable(TileTopRight)) switch
                 {
                     (true, true) => TextureBorderExtend.B,
-                    (true, false) => TextureBorderExtend.B_AgTL,
-                    (false, true) => TextureBorderExtend.B_AgTR,
+                    (true, false) => TextureBorderExtend.B_AgTR,
+                    (false, true) => TextureBorderExtend.B_AgTL,
                     (false, false) => TextureBorderExtend.B_AgBoth,
                 },
 

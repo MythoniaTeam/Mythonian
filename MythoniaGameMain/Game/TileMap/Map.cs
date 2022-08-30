@@ -128,7 +128,7 @@ namespace Mythonia.Game.TileMap
             foreach (var tile in this)
             {
                 //如果图格已经检查过了, 跳过当前图格
-                if (tile is null || tileChecked[(int)tile.MapIndex.X, (int)tile.MapIndex.Y]) continue;
+                if (tile is null || tileChecked[(int)tile.MapIndex.X, (int)tile.MapIndex.Y] || !tile.HasColl) continue;
 
 
                 MVec2 indexFr = tile.MapIndex;
@@ -142,8 +142,12 @@ namespace Mythonia.Game.TileMap
                 while (tile2?.HasColl ?? false)
                 {
                     indexTo.X++;
+                    //把方块设为已检查
                     tileChecked[(int)tile2.MapIndex.X, (int)tile2.MapIndex.Y] = true;
+                    //当前方块包含在内
                     tilesInclude.Add(tile2);
+
+                    //把当前方块 设为右边的方块
                     tile2 = tile2.TileRight;
                 }
 
@@ -161,9 +165,8 @@ namespace Mythonia.Game.TileMap
                         if ((this[(int)indexFr.X, y]?.TileLeft?.HasColl ?? false) &&
                             (this[(int)indexTo.X, y]?.TileRight?.HasColl ?? false))
                         {
-                            indexTo.Y = y - 1;
+                            //indexTo.Y = y - 1;
                             breakWhile = true;
-                            break;
                         }
 
                         //遍历 x, 如果有任意一个 x 没有碰撞体, 跳出循环
@@ -171,7 +174,7 @@ namespace Mythonia.Game.TileMap
                         {
                             if (!(this[x, y]?.HasColl ?? false))
                             {
-                                indexTo.Y = y - 1;
+                                //indexTo.Y = y - 1;
                                 breakWhile = true;
                                 break;
                             }
@@ -182,6 +185,7 @@ namespace Mythonia.Game.TileMap
                         {
                             for (int x = (int)indexFr.X; x <= (int)indexTo.X; x++)
                             {
+                                indexTo.Y++;
                                 tileChecked[x, y] = true;
                                 tilesInclude.Add(this[x, y]);
                             }
@@ -262,6 +266,7 @@ namespace Mythonia.Game.TileMap
                         4 => new(100 + i % 155, 50 + i % 155, 100 + i % 155),
                         5 => new(50 + i % 155, 100 + i % 155, 100 + i % 155),
                         6 => new(100 + i % 155, 100 + i % 155, 100 + i % 155),
+                        _ => throw new Exception()
                     };
                     color = new(color, 150);
                     hitbox.DrawHitbox(color);
