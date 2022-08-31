@@ -65,7 +65,7 @@ namespace Mythonia.Game
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            Pos = new(_player.Position, Pos.Z);//方便测试先改成这样
+            Pos = new(MGame.Main.Player.Position, Pos.Z);//方便测试先改成这样
             /*
             if (FollowPlayer)
             {

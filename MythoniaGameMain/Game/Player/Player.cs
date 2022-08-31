@@ -12,6 +12,8 @@ namespace Mythonia.Game.Player
         #region Prop
 
         public MGame MGame => (MGame)Game;
+        public Input Input => MGame.Main.Input;
+
         public Map Map => MGame.Main.TileMap;
 
         public MTexture Texture { get; private set; }
@@ -129,9 +131,8 @@ namespace Mythonia.Game.Player
             DebugUpdate();
 #endif
 
-            Input input = MGame.Main.Input;
 
-            if (input.KeyDown(KeyName.Jump))
+            if (Input.KeyDown(KeyName.Jump))
             {
                 //如果在地面上, 将速度设为 JumpInitSpd, 按键时间设为 0 表示开始按键 (平时是 -1)
                 if (OnGround)
@@ -185,12 +186,12 @@ namespace Mythonia.Game.Player
 
 
             WalkKeyPressed = false;
-            if (input.KeyDown(KeyName.Left))
+            if (Input.KeyDown(KeyName.Left))
             {
                 _velocity.X -= Acc * gameTime.CFDuration();
                 WalkKeyPressed = true;
             }
-            if (input.KeyDown(KeyName.Right))
+            if (Input.KeyDown(KeyName.Right))
             {
                 _velocity.X += Acc * gameTime.CFDuration();
                 WalkKeyPressed = true;
