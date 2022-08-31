@@ -68,14 +68,17 @@ namespace Mythonia.Game
         /// 按键是否被按住
         /// </summary>
         public bool KeyDown(Key keyName) => this[keyName] > 0;
+
         /// <summary>
         /// 按键是否处于按下的一瞬间
         /// </summary>
         public bool KeyPress(Key keyName) => this[keyName] == 1;
+
         /// <summary>
         /// 按键是否没有被按下
         /// </summary>
-        public bool KeyUP(Key keyName) => this[keyName] < 0;
+        public bool KeyUp(Key keyName) => this[keyName] < 0;
+
         /// <summary>
         /// 按键是否处于松开的一瞬间
         /// </summary>
