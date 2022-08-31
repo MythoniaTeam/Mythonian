@@ -30,17 +30,18 @@ namespace Mythonia.Game.Player
         public bool OnGround { get; private set; }
         public IList<RectangleHitbox> OnHitbox { get; private set; }
 
-        public float JumpKeyPressTime = -1;
+        //public float JumpKeyPressTime = -1;
         public bool WalkKeyPressed = false;
+        public bool JumpKeyPressed = false;
 
 
         private const float Acc = 0.4f;
-        private const float Gravity = -0.48f;
-        private const float JumpAcc = 0.42f;
-        private const float JumpKeyPressAcc = 0.5f;
-        private const float JumpInitSpd = 8f;
-        private const float JumpAccTime = 20;
-        private const float Resis = 0.94f;
+        private const float Gravity = -0.58f;
+        private const float JumpKeyPressAcc = 0.32f;
+        //private const float JumpAcc = 0.3f;
+        private const float JumpInitSpd = 7.5f;
+        //private const float JumpAccTime = 15;
+        private const float MaxFallingSpd = 15;
         private const float ResisX = 0.89f;
 
         #endregion Prop - Physics
@@ -114,9 +115,8 @@ namespace Mythonia.Game.Player
             else
             {
                 OnGround = false;
-                _velocity.Y += Gravity * gameTime.CFDuration();
             }
-            _velocity.Y += Gravity;
+
 
 
             KeyboardState key = Keyboard.GetState();
@@ -138,15 +138,20 @@ namespace Mythonia.Game.Player
                 if (OnGround)
                 {
                     _velocity.Y = JumpInitSpd;
-                    JumpKeyPressTime = 0;
+                    //JumpKeyPressTime = 0;
+                    JumpKeyPressed = true;
                 }
+            }
+            else
+            {
+                JumpKeyPressed = false;
             }
 
 
 
             //如果 按下跳跃键 (>=0), 且按键时间 < JumpAccTime
             //不在地面, 且正在向上移动 (y 速度 > 0)
-            if (JumpKeyPressTime is >= 0 and < JumpAccTime && _velocity.Y > 0)
+            /*if (JumpKeyPressTime is >= 0 and < JumpAccTime && _velocity.Y > 0)
             {
                 //如果本帧加速后，总加速时长超出上限，只增加剩余的部分
                 if (JumpKeyPressTime + gameTime.CFDuration() >= JumpAccTime)
@@ -166,7 +171,19 @@ namespace Mythonia.Game.Player
                 JumpKeyPressTime += gameTime.CFDuration();
             }
             if (JumpKeyPressTime >= JumpAccTime)
-                JumpKeyPressTime = -1;
+                JumpKeyPressTime = -1;*/
+            if (JumpKeyPressed && _velocity.Y > 0)
+            {
+                //如果按下跳跃键, 且 Y 速度 > 0
+                _velocity.Y += (Gravity + JumpKeyPressAcc) * gameTime.CFDuration();
+            }
+            else if (_velocity.Y >= -MaxFallingSpd)
+            {
+                //如果松开跳跃键, Y 速度 <= 0 且未达到最大坠落速度
+                _velocity.Y += Gravity * gameTime.CFDuration();
+                if (_velocity.Y < -MaxFallingSpd) _velocity.Y = -MaxFallingSpd;
+            }
+
 
             WalkKeyPressed = false;
             if (key.IsKeyDown(Keys.A))
@@ -195,7 +212,6 @@ namespace Mythonia.Game.Player
                 _velocity.Y = 0;
             }
             _velocity.X *= ResisX;
-            _velocity.Y *= Resis;
         }
 
         /// <summary>

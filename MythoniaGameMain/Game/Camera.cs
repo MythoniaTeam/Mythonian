@@ -68,7 +68,8 @@ namespace Mythonia.Game
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
+            Pos = new(_player.Position, Pos.Z);//方便测试先改成这样
+            /*
             if (FollowPlayer)
             {
                 MVec3 c;
@@ -100,7 +101,7 @@ namespace Mythonia.Game
             else
             {
                 Pos += (Target - Pos) / 50;
-            }
+            }*/
         }
 
         #endregion
