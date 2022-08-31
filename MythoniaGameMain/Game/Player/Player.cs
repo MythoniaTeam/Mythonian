@@ -131,7 +131,7 @@ namespace Mythonia.Game.Player
 
             Input input = MGame.Main.Input;
 
-            if (input.KeyDown(Key.Jump))
+            if (input.KeyDown(KeyName.Jump))
             {
                 //如果在地面上, 将速度设为 JumpInitSpd, 按键时间设为 0 表示开始按键 (平时是 -1)
                 if (OnGround)
@@ -152,13 +152,13 @@ namespace Mythonia.Game.Player
                 {
 
                     _velocity.Y += 
-                        (JumpAcc + (input.KeyDown(Key.Jump) ? JumpKeyPressAcc : 0))
+                        (JumpAcc + (input.KeyDown(KeyName.Jump) ? JumpKeyPressAcc : 0))
                         * (JumpAccTime - JumpKeyPressTime);
                 }
                 //否则增加 JumpAcc
                 {
                     _velocity.Y += 
-                        (JumpAcc + (input.KeyDown(Key.Jump) ? JumpKeyPressAcc : 0))
+                        (JumpAcc + (input.KeyDown(KeyName.Jump) ? JumpKeyPressAcc : 0))
                         * gameTime.CFDuration();
                     //增加按键时间    
                 }
@@ -168,12 +168,12 @@ namespace Mythonia.Game.Player
                 JumpKeyPressTime = -1;
 
             WalkKeyPressed = false;
-            if (input.KeyDown(Key.Left))
+            if (input.KeyDown(KeyName.Left))
             {
                 _velocity.X -= Acc * gameTime.CFDuration();
                 WalkKeyPressed = true;
             }
-            if (input.KeyDown(Key.Right))
+            if (input.KeyDown(KeyName.Right))
             {
                 _velocity.X += Acc * gameTime.CFDuration();
                 WalkKeyPressed = true;

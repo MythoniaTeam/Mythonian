@@ -2,7 +2,7 @@
 
 namespace Mythonia.Game
 {
-    public enum Key
+    public enum KeyName
     {
         Left,
         Right,
@@ -21,7 +21,7 @@ namespace Mythonia.Game
 
         private int[] _keyStates;
 
-        public int this[Key keyName] => _keyStates[(int)keyName];
+        public int this[KeyName keyName] => _keyStates[(int)keyName];
 
         #endregion
 
@@ -49,7 +49,7 @@ namespace Mythonia.Game
 
             for (int i = 0; i < _keyStates.Length; i++)
             {
-                if (key.IsKeyDown(KeyCode[(Key)i]))
+                if (key.IsKeyDown(KeyCode[(KeyName)i]))
                 {
                     if (_keyStates[i] < 0) _keyStates[i] = 0;
 
@@ -67,22 +67,22 @@ namespace Mythonia.Game
         /// <summary>
         /// 按键是否被按住
         /// </summary>
-        public bool KeyDown(Key keyName) => this[keyName] > 0;
+        public bool KeyDown(KeyName keyName) => this[keyName] > 0;
 
         /// <summary>
         /// 按键是否处于按下的一瞬间
         /// </summary>
-        public bool KeyPress(Key keyName) => this[keyName] == 1;
+        public bool KeyPress(KeyName keyName) => this[keyName] == 1;
 
         /// <summary>
         /// 按键是否没有被按下
         /// </summary>
-        public bool KeyUp(Key keyName) => this[keyName] < 0;
+        public bool KeyUp(KeyName keyName) => this[keyName] < 0;
 
         /// <summary>
         /// 按键是否处于松开的一瞬间
         /// </summary>
-        public bool KeyRelease(Key keyName) => this[keyName] == -1;
+        public bool KeyRelease(KeyName keyName) => this[keyName] == -1;
 
         #endregion
 
@@ -92,7 +92,7 @@ namespace Mythonia.Game
     {
         private Keys[] _keyCodes;
 
-        public Keys this[Key keyName] { get => _keyCodes[(int)keyName]; set => _keyCodes[(int)keyName] = value; }
+        public Keys this[KeyName keyName] { get => _keyCodes[(int)keyName]; set => _keyCodes[(int)keyName] = value; }
 
         public int Length => _keyCodes.Length;
 

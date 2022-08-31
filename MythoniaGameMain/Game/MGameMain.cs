@@ -35,18 +35,25 @@ namespace Mythonia.Game
                 Keys.K
             });
 
+            /*
+             * 可通过Input[KeyName keyName]来访问这些按键的状态
+             * 例：MGame.Main.Input[KeyName.Jump]
+             * 返回一个int表示按键状态
+             * 也可以使用这些返回布尔值的方法：KeyDown, KeyPress, KeyUp, KeyRelease
+             */
+
             Player = new Player.Player(MGame);
 
             TileMap = Map.StringToMap(MGame, tileSize, new string[]
             {
-                @"   ####            ##   ",
-                @"     |             #    ",
-                @"     |             ##   ",
-                @"     |             #    ",
-                @"     |             ##   ",
-                @"  ######           #    ",
-                @" ##    ##############   ",
-                @"##                 #### ",
+                @"     ####            ##   ",
+                @"       |             #    ",
+                @"       |             ##   ",
+                @"       |             #    ",
+                @"       |             ##   ",
+                @"    ######           #    ",
+                @"   ##    ##############   ",
+                @"####                 #####",
             });
 
             MGame.Components.Add(Camera);
