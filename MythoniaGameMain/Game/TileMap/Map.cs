@@ -18,7 +18,14 @@ namespace Mythonia.Game.TileMap
         {
             get
             {
-                return _tiles[_X, _Y];
+                try
+                {
+                    return _tiles[_X, _Y];
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    throw new InvalidOperationException();
+                }
             }
         }
 

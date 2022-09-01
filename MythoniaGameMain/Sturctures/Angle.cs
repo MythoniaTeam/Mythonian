@@ -43,7 +43,7 @@ namespace Mythonia.Sturctures
 
         #region Operators
 
-        public static Angle operator +(Angle a, Angle b) => new(a.Degree + b.Degree);   
+        public static Angle operator +(Angle a, Angle b) => new(a.Degree + b.Degree);
         public static Angle operator +(Angle a, float b) => new(a.Degree + b);
         public static Angle operator +(float a, Angle b) => new(a + b.Degree);
         public static Angle operator -(Angle a, Angle b) => new(a.Degree - b.Degree);
