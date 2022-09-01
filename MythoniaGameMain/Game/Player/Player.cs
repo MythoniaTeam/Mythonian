@@ -39,10 +39,16 @@ namespace Mythonia.Game.Player
         private const float WalkAcc = 0.4f;
         private MLimit MaxWalkSpd = new(3);
 
-        private const float Gravity = -0.58f;
-        private const float JumpKeyPressAcc = 0.32f;
-        private const float JumpInitSpd = 7.5f;
-        private const float MaxFallingSpd = 15;
+        private const float Gravity = -0.5f;
+        private const float JumpKeyPressAcc = 0.25f;
+        private const float JumpInitSpd = 7f;
+        private const float MaxFallingSpd = 8;
+
+        private const int JumpsCountMax = 1;
+        private int JumpsCount = 0;
+        private const int LeaveGroundJumpTime = 7;
+        private int LeaveGroundTimeCount = -1;
+
 
         #endregion Prop - Physics
 
@@ -130,10 +136,11 @@ namespace Mythonia.Game.Player
             if (Input.KeyDown(KeyName.Jump))
             {   
                 //如果在地面上, 将速度设为 JumpInitSpd, 按键时间设为 0 表示开始按键 (平时是 -1)
-                if (OnGround)
+                if (JumpsCount < JumpsCountMax && !JumpKeyPressed)
                 {
                     _velocity.Y = JumpInitSpd;
                     JumpKeyPressed = true;
+                    JumpsCount++;
                 }
             }
             else
@@ -142,30 +149,6 @@ namespace Mythonia.Game.Player
             }
 
 
-
-            //如果 按下跳跃键 (>=0), 且按键时间 < JumpAccTime
-            //不在地面, 且正在向上移动 (y 速度 > 0)
-            /*if (JumpKeyPressTime is >= 0 and < JumpAccTime && _velocity.Y > 0)
-            {
-                //如果本帧加速后，总加速时长超出上限，只增加剩余的部分
-                if (JumpKeyPressTime + gameTime.CFDuration() >= JumpAccTime)
-                {
-
-                    _velocity.Y += 
-                        (JumpAcc + (input.KeyDown(KeyName.Jump) ? JumpKeyPressAcc : 0))
-                        * (JumpAccTime - JumpKeyPressTime);
-                }
-                //否则增加 JumpAcc
-                {
-                    _velocity.Y += 
-                        (JumpAcc + (input.KeyDown(KeyName.Jump) ? JumpKeyPressAcc : 0))
-                        * gameTime.CFDuration();
-                    //增加按键时间    
-                }
-                JumpKeyPressTime += gameTime.CFDuration();
-            }
-            if (JumpKeyPressTime >= JumpAccTime)
-                JumpKeyPressTime = -1;*/
             if (JumpKeyPressed && _velocity.Y > 0)
             {
                 //如果按下跳跃键, 且 Y 速度 > 0
@@ -212,9 +195,9 @@ namespace Mythonia.Game.Player
                 //如果加速度后超出范围，限制到范围内
                 _velocity.X = MaxWalkSpd.Limit(_velocity.X);
             }
-                
-            
 
+
+            bool wasOnGround = OnGround;
 
             if (Move(gameTime, _velocity * (1, 0)))
             {
@@ -227,6 +210,26 @@ namespace Mythonia.Game.Player
                 _velocity.Y = 0;
             }
             //_velocity.X *= ResisX;
+
+
+            if (OnGround)
+            {
+                //如果在地面，重置计时器 (设为-1不启用)
+                LeaveGroundTimeCount = -1;
+                JumpsCount = 0;
+            }
+            else if (wasOnGround)
+            {
+                //如果之前在地面上，移动后不在，开始计算
+                LeaveGroundTimeCount = 0; //开始计算离开地面的时长 (平时是 -1)
+            }
+
+            if (LeaveGroundTimeCount >= 0)
+            {
+                LeaveGroundTimeCount += 1;
+                if (LeaveGroundTimeCount > LeaveGroundJumpTime) JumpsCount++;
+            }
+
         }
 
         /// <summary>
