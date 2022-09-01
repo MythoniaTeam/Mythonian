@@ -43,6 +43,15 @@ namespace Mythonia.Sturctures
 
         public void Deconstruct(out float x, out float y, out float z) => _v.Deconstruct(out x, out y, out z);
 
+
+        public MVec3 Replace(float? x = null, float? y = null, float? z = null)
+        {
+            if (x is float x2) X = x2;
+            if (y is float y2) Y = y2;
+            if (z is float z2) Z = z2;
+            return this;
+        }
+
         #endregion Methods
 
 

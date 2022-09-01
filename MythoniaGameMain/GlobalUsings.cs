@@ -2,6 +2,7 @@
 global using System.IO;
 global using System.Collections.Generic;
 global using System.Diagnostics;
+global using SDebug = System.Diagnostics.Debug;
 
 global using Microsoft.Xna.Framework;
 global using XNA = Microsoft.Xna.Framework;

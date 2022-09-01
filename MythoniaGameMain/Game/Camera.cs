@@ -24,15 +24,13 @@ namespace Mythonia.Game
 
         public bool FollowPlayer { get; set; } = true;
 
-        private readonly Player.Player _player;
-
         #endregion
 
 
 
         #region Constructor
 
-        public Camera(MGame game, Player.Player player, float? x, float? y, float? z = null, float? focus = null, Angle? direction = null, float? scale = null) : base(game)
+        public Camera(MGame game, float? x, float? y, float? z = null, float? focus = null, Angle? direction = null, float? scale = null) : base(game)
         {
             MGame = game;
 
@@ -41,7 +39,6 @@ namespace Mythonia.Game
             Focus = focus ?? 100;
             Pos = new MVec3(x ?? 0, y ?? 0, z ?? 2 * Focus);
             Target = Pos;
-            _player = player;
         }
 
         #endregion
@@ -68,10 +65,13 @@ namespace Mythonia.Game
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
+            Pos = new(MGame.Main.Player.Position, Pos.Z);//方便测试先改成这样
+            /*
             if (FollowPlayer)
             {
                 MVec3 c;
+
+                Player.Player _player = MGame.Main.Player;
 
                 if (_player.Velocity.Length() == 0f)
                 {
@@ -100,7 +100,7 @@ namespace Mythonia.Game
             else
             {
                 Pos += (Target - Pos) / 50;
-            }
+            }*/
         }
 
         #endregion
