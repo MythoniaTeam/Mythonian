@@ -33,7 +33,8 @@ namespace Mythonia.Game.Player
 
         //public float JumpKeyPressTime = -1;
         public sbyte WalkKeyStatus = 0;
-        public bool JumpKeyPressed = false;
+        /// <summary>判断玩家是否松开跳跃键 (从起跳开始)</summary>
+        public bool JumpKeyReleased = true;
 
 
         private const float WalkAcc = 0.4f;
@@ -134,29 +135,40 @@ namespace Mythonia.Game.Player
             
 
             if (Input.KeyDown(KeyName.Jump))
-            {   
-                //如果在地面上, 将速度设为 JumpInitSpd, 按键时间设为 0 表示开始按键 (平时是 -1)
-                if (JumpsCount < JumpsCountMax && !JumpKeyPressed)
+            {
+                int keyPressTime = Input[KeyName.Jump];
+                if (keyPressTime <= 12)
                 {
-                    _velocity.Y = JumpInitSpd;
-                    JumpKeyPressed = true;
-                    JumpsCount++;
+                    //如果按下跳跃键
+                    if(JumpsCount < JumpsCountMax)
+                    {
+                        //将速度设为 JumpInitSpd，按键时间设为 0 表示开始按键 (平时是 -1)
+                        _velocity.Y = JumpInitSpd;
+                        JumpKeyReleased = false;
+                        JumpsCount++;
+                    }
+                    else if(JumpKeyReleased && keyPressTime <= 3)
+                    {
+                        _velocity.Y -= 1f;
+                    }
+
                 }
             }
             else
             {
-                JumpKeyPressed = false;
+                //如果松开跳跃键, 设为假
+                JumpKeyReleased = true;
             }
 
 
-            if (JumpKeyPressed && _velocity.Y > 0)
+            if (!JumpKeyReleased && _velocity.Y > 0)
             {
                 //如果按下跳跃键, 且 Y 速度 > 0
                 _velocity.Y += (Gravity + JumpKeyPressAcc) * gameTime.CFDuration();
             }
             else if (_velocity.Y >= -MaxFallingSpd)
             {
-                //如果松开跳跃键, Y 速度 <= 0 且未达到最大坠落速度
+                //如果松开跳跃键 或 Y 速度 <= 0 且未达到最大坠落速度
                 _velocity.Y += Gravity * gameTime.CFDuration();
                 if (_velocity.Y < -MaxFallingSpd) _velocity.Y = -MaxFallingSpd;
             }
