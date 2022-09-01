@@ -26,7 +26,6 @@ namespace Mythonia.Game.Player
         public MVec2 Velocity { get => _velocity; set => _velocity = value; }
         private MVec2 _velocity = (0, 0);
 
-        public RectangleHitbox HitboxFoot { get; private set; }
         public RectangleHitbox Hitbox { get; private set; }
 
         public bool OnGround { get; private set; }
@@ -34,19 +33,23 @@ namespace Mythonia.Game.Player
 
         //public float JumpKeyPressTime = -1;
         public sbyte WalkKeyStatus = 0;
-        public bool JumpKeyPressed = false;
+        /// <summary>判断玩家是否松开跳跃键 (从起跳开始)</summary>
+        public bool JumpKeyReleased = true;
 
 
         private const float WalkAcc = 0.4f;
         private MLimit MaxWalkSpd = new(3);
 
-        private const float Gravity = -0.58f;
-        private const float JumpKeyPressAcc = 0.32f;
-        //private const float JumpAcc = 0.3f;
-        private const float JumpInitSpd = 7.5f;
-        //private const float JumpAccTime = 15;
-        private const float MaxFallingSpd = 15;
-        private const float ResisX = 0.89f;
+        private const float Gravity = -0.5f;
+        private const float JumpKeyPressAcc = 0.25f;
+        private const float JumpInitSpd = 7f;
+        private const float MaxFallingSpd = 8;
+
+        private const int JumpsCountMax = 1;
+        private int JumpsCount = 0;
+        private const int LeaveGroundJumpTime = 7;
+        private int LeaveGroundTimeCount = -1;
+
 
         #endregion Prop - Physics
 
@@ -60,10 +63,7 @@ namespace Mythonia.Game.Player
         {
             Texture = game.TextureManager["TestPlayer"];
             Hitbox = new(MGame, () => Position, Texture.Size);
-            HitboxFoot = new(MGame, () => 
-                Position - (0, Texture.Height / 2), 
-                (Texture.Width, 3)
-            );
+            
         }
 
         #endregion
@@ -116,7 +116,7 @@ namespace Mythonia.Game.Player
         {
             base.Update(gameTime);
 
-            if (HitUtility.GetHitTile(Map, HitboxFoot) is IList<RectangleHitbox> ground)
+            /*if (HitUtility.GetHitTile(Map, HitboxFoot) is IList<RectangleHitbox> ground)
             {
                 OnHitbox = ground;
                 OnGround = true;
@@ -125,7 +125,7 @@ namespace Mythonia.Game.Player
             else
             {
                 OnGround = false;
-            }
+            }*/
 
 
 
@@ -135,52 +135,40 @@ namespace Mythonia.Game.Player
             
 
             if (Input.KeyDown(KeyName.Jump))
-            {   
-                //如果在地面上, 将速度设为 JumpInitSpd, 按键时间设为 0 表示开始按键 (平时是 -1)
-                if (OnGround)
+            {
+                int keyPressTime = Input[KeyName.Jump];
+                if (keyPressTime <= 12)
                 {
-                    _velocity.Y = JumpInitSpd;
-                    JumpKeyPressed = true;
+                    //如果按下跳跃键
+                    if(JumpsCount < JumpsCountMax)
+                    {
+                        //将速度设为 JumpInitSpd，按键时间设为 0 表示开始按键 (平时是 -1)
+                        _velocity.Y = JumpInitSpd;
+                        JumpKeyReleased = false;
+                        JumpsCount++;
+                    }
+                    else if(JumpKeyReleased && keyPressTime <= 3)
+                    {
+                        _velocity.Y -= 1f;
+                    }
+
                 }
             }
             else
             {
-                JumpKeyPressed = false;
+                //如果松开跳跃键, 设为假
+                JumpKeyReleased = true;
             }
 
 
-
-            //如果 按下跳跃键 (>=0), 且按键时间 < JumpAccTime
-            //不在地面, 且正在向上移动 (y 速度 > 0)
-            /*if (JumpKeyPressTime is >= 0 and < JumpAccTime && _velocity.Y > 0)
-            {
-                //如果本帧加速后，总加速时长超出上限，只增加剩余的部分
-                if (JumpKeyPressTime + gameTime.CFDuration() >= JumpAccTime)
-                {
-
-                    _velocity.Y += 
-                        (JumpAcc + (input.KeyDown(KeyName.Jump) ? JumpKeyPressAcc : 0))
-                        * (JumpAccTime - JumpKeyPressTime);
-                }
-                //否则增加 JumpAcc
-                {
-                    _velocity.Y += 
-                        (JumpAcc + (input.KeyDown(KeyName.Jump) ? JumpKeyPressAcc : 0))
-                        * gameTime.CFDuration();
-                    //增加按键时间    
-                }
-                JumpKeyPressTime += gameTime.CFDuration();
-            }
-            if (JumpKeyPressTime >= JumpAccTime)
-                JumpKeyPressTime = -1;*/
-            if (JumpKeyPressed && _velocity.Y > 0)
+            if (!JumpKeyReleased && _velocity.Y > 0)
             {
                 //如果按下跳跃键, 且 Y 速度 > 0
                 _velocity.Y += (Gravity + JumpKeyPressAcc) * gameTime.CFDuration();
             }
             else if (_velocity.Y >= -MaxFallingSpd)
             {
-                //如果松开跳跃键, Y 速度 <= 0 且未达到最大坠落速度
+                //如果松开跳跃键 或 Y 速度 <= 0 且未达到最大坠落速度
                 _velocity.Y += Gravity * gameTime.CFDuration();
                 if (_velocity.Y < -MaxFallingSpd) _velocity.Y = -MaxFallingSpd;
             }
@@ -219,21 +207,41 @@ namespace Mythonia.Game.Player
                 //如果加速度后超出范围，限制到范围内
                 _velocity.X = MaxWalkSpd.Limit(_velocity.X);
             }
-                
-            
 
+
+            bool wasOnGround = OnGround;
 
             if (Move(gameTime, _velocity * (1, 0)))
             {
                 _velocity.X = 0;
             }
-            if(Move(gameTime, _velocity * (0, 1)))
+            OnGround = false;
+            if (Move(gameTime, _velocity * (0, 1)))
             {
                 if (_velocity.Y < 0) OnGround = true;
-                else OnGround = false;
                 _velocity.Y = 0;
             }
             //_velocity.X *= ResisX;
+
+
+            if (OnGround)
+            {
+                //如果在地面，重置计时器 (设为-1不启用)
+                LeaveGroundTimeCount = -1;
+                JumpsCount = 0;
+            }
+            else if (wasOnGround)
+            {
+                //如果之前在地面上，移动后不在，开始计算
+                LeaveGroundTimeCount = 0; //开始计算离开地面的时长 (平时是 -1)
+            }
+
+            if (LeaveGroundTimeCount >= 0)
+            {
+                LeaveGroundTimeCount += 1;
+                if (LeaveGroundTimeCount > LeaveGroundJumpTime) JumpsCount++;
+            }
+
         }
 
         /// <summary>
@@ -361,7 +369,7 @@ namespace Mythonia.Game.Player
             if (MDebug.DrawEntitiesHitbox)
             {
                 Hitbox.DrawHitbox(new(150,255,160,150));
-                HitboxFoot.DrawHitbox(new(50,0, 0, 100));
+                //HitboxFoot.DrawHitbox(new(50,0, 0, 100));
             }
 #endif
         }
