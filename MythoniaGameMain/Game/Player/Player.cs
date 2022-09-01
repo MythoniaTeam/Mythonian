@@ -26,7 +26,6 @@ namespace Mythonia.Game.Player
         public MVec2 Velocity { get => _velocity; set => _velocity = value; }
         private MVec2 _velocity = (0, 0);
 
-        public RectangleHitbox HitboxFoot { get; private set; }
         public RectangleHitbox Hitbox { get; private set; }
 
         public bool OnGround { get; private set; }
@@ -42,11 +41,8 @@ namespace Mythonia.Game.Player
 
         private const float Gravity = -0.58f;
         private const float JumpKeyPressAcc = 0.32f;
-        //private const float JumpAcc = 0.3f;
         private const float JumpInitSpd = 7.5f;
-        //private const float JumpAccTime = 15;
         private const float MaxFallingSpd = 15;
-        private const float ResisX = 0.89f;
 
         #endregion Prop - Physics
 
@@ -60,10 +56,7 @@ namespace Mythonia.Game.Player
         {
             Texture = game.TextureManager["TestPlayer"];
             Hitbox = new(MGame, () => Position, Texture.Size);
-            HitboxFoot = new(MGame, () => 
-                Position - (0, Texture.Height / 2), 
-                (Texture.Width, 3)
-            );
+            
         }
 
         #endregion
@@ -116,7 +109,7 @@ namespace Mythonia.Game.Player
         {
             base.Update(gameTime);
 
-            if (HitUtility.GetHitTile(Map, HitboxFoot) is IList<RectangleHitbox> ground)
+            /*if (HitUtility.GetHitTile(Map, HitboxFoot) is IList<RectangleHitbox> ground)
             {
                 OnHitbox = ground;
                 OnGround = true;
@@ -125,7 +118,7 @@ namespace Mythonia.Game.Player
             else
             {
                 OnGround = false;
-            }
+            }*/
 
 
 
@@ -227,10 +220,10 @@ namespace Mythonia.Game.Player
             {
                 _velocity.X = 0;
             }
-            if(Move(gameTime, _velocity * (0, 1)))
+            OnGround = false;
+            if (Move(gameTime, _velocity * (0, 1)))
             {
                 if (_velocity.Y < 0) OnGround = true;
-                else OnGround = false;
                 _velocity.Y = 0;
             }
             //_velocity.X *= ResisX;
@@ -361,7 +354,7 @@ namespace Mythonia.Game.Player
             if (MDebug.DrawEntitiesHitbox)
             {
                 Hitbox.DrawHitbox(new(150,255,160,150));
-                HitboxFoot.DrawHitbox(new(50,0, 0, 100));
+                //HitboxFoot.DrawHitbox(new(50,0, 0, 100));
             }
 #endif
         }
