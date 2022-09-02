@@ -120,6 +120,41 @@ namespace Mythonia.Sturctures
 
         public MVec2 Rotation(Angle rotation) => _v.Rotation(rotation);
 
+        /// <summary>
+        /// 将当前向量的 X / Y 增加给定的值, 然后返回.
+        /// <para>
+        /// <b>Example: </b><br/>
+        /// <c><see langword="new"/> <see cref="MVec2"/>(2, 3).Change(<paramref name="y"/>: 10)</c><br/>
+        /// <i>(将 Y 增加 10 并返回, 结果应为向量 (2, 13) )</i>
+        /// </para>
+        /// </summary>
+        /// <param name="x">X增加的值, 如果留空, 则为 <see langword="null"/>, 不会修改原有值</param>
+        /// <param name="y">Y增加的值, 如果留空, 则为 <see langword="null"/>, 不会修改原有值</param>
+        /// <returns>X / Y 改变后的向量</returns>
+        public MVec2 Change(float? x = null, float? y = null)
+        {
+            if (x is float x2) X += x2;
+            if (y is float y2) Y += y2;
+            return this;
+        }
+        /// <summary>
+        /// 将当前向量的 X / Y 替换为给定的值, 然后返回.
+        /// <para>
+        /// <b>Example: </b><br/>
+        /// <c><see langword="new"/> <see cref="MVec2"/>(2, 3).Replace(<paramref name="y"/>: 10)</c><br/>
+        /// <i>(将 Y 值设为 10 并返回, 结果应为向量 (2, 10) )</i>
+        /// </para>
+        /// </summary>
+        /// <param name="x">X替换的值, 如果留空, 则为 <see langword="null"/>, 不会修改原有值</param>
+        /// <param name="y">Y替换的值, 如果留空, 则为 <see langword="null"/>, 不会修改原有值</param>
+        /// <returns>X / Y 改变后的向量</returns>
+        public MVec2 Replace(float? x = null, float? y = null)
+        {
+            if (x is float x2) X = x2;
+            if (y is float y2) Y = y2;
+            return this;
+        }
+
 
         #endregion Methods
 

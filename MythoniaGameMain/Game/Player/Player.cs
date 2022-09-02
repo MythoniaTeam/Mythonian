@@ -188,7 +188,7 @@ namespace Mythonia.Game.Player
             {
                 //如果速度超出范围，或松开移动键
 
-                if (MathF.Abs(_velocity.X) < WalkAcc * gameTime.CFDuration())
+                if (MathF.Abs(_velocity.X) <= WalkAcc * gameTime.CFDuration())
                 {
                     //如果 X 速度 < 减速度，直接归零
                     _velocity.X = 0;
@@ -211,15 +211,15 @@ namespace Mythonia.Game.Player
 
             bool wasOnGround = OnGround;
 
-            if (Move(gameTime, _velocity * (1, 0)))
-            {
-                _velocity.X = 0;
-            }
             OnGround = false;
             if (Move(gameTime, _velocity * (0, 1)))
             {
                 if (_velocity.Y < 0) OnGround = true;
                 _velocity.Y = 0;
+            }
+            if (Move(gameTime, _velocity * (1, 0)))
+            {
+                _velocity.X = 0;
             }
             //_velocity.X *= ResisX;
 
@@ -255,7 +255,6 @@ namespace Mythonia.Game.Player
         /// </list></returns>
         private bool Move(GameTime gameTime, MVec2 vel)
         {
-            bool coll = false;
 
             //移动
             vel *= gameTime.CFDuration();
@@ -263,29 +262,82 @@ namespace Mythonia.Game.Player
 
             //检查碰撞
             var hitboxes = HitUtility.GetHitTile(Map, Hitbox);
-            //如果存在碰撞
-            if (hitboxes is not null)
+
+
+            //如果不存在碰撞，返回
+            if (hitboxes is null) return false;
+
+
+            //if (actionColl is not null) actionColl();
+            
+            if(vel.Y > 0)
             {
-                coll = true;
-                //后退一半 vel
-                vel /= 2.0f;
-                _position -= vel;
+                var posTemp2 = _position;
+                int range = 4;
+                int i = 1;
+                while (true)
+                {
+                    _position = posTemp2.Clone().Change(x: i);
+                    //如果不发生碰撞，返回
+                    if (!hitboxes.IsHit(Hitbox)) 
+                        return false;
 
-                //记录当前位置
-                var posTemp = _position;
-
-                //按照 hitboxes[0] 用二分法移动
-                DichotomyMove(vel, hitboxes[0]);
-
-                //移除 hitboxes[0]
-                hitboxes.RemoveAt(0);
-
-                //检测是否仍与其他碰撞体碰撞
-                CheckMove(hitboxes, posTemp, vel);
-
+                    i += MathF.Sign(i);
+                    if (i == range + 1) i = -1;
+                    if (i == -range - 1) break;
+                }
+                _position = posTemp2;
             }
+            else if (vel.X != 0 && _velocity.Y < 0)
+            {
+                var posTemp2 = _position;
+                int range = 4;
+                int i = 1;
+                while (true)
+                {
+                    _position = posTemp2.Clone().Change(y: i);
+                    //如果不发生碰撞，返回
+                    if (!hitboxes.IsHit(Hitbox))
+                    {
+                        if (HitUtility.GetHitTile(Map, Hitbox) is null)
+                            return false;
+                    }
 
-            return coll;
+                    i++;
+                    if (i == range + 1) break;
+
+                }
+
+                if (WalkKeyStatus != 0 && OnGround)
+                {
+                    _position = posTemp2.Clone().Change(y: 16);
+                    if (HitUtility.GetHitTile(Map, Hitbox) is null) _velocity.Y += 4;
+
+                }
+
+                        _position = posTemp2;
+            }
+            
+
+            //后退一半 vel
+            vel /= 2.0f;
+            _position -= vel;
+
+            //记录当前位置
+            var posTemp = _position;
+
+            //按照 hitboxes[0] 用二分法移动
+            DichotomyMove(vel, hitboxes[0]);
+
+            //移除 hitboxes[0]
+            hitboxes.RemoveAt(0);
+
+            //检测是否仍与其他碰撞体碰撞
+            CheckMove(hitboxes, posTemp, vel);
+
+            
+
+            return true;
         }
 
         /// <summary>
