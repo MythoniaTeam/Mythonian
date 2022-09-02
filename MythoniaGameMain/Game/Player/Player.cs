@@ -210,14 +210,16 @@ namespace Mythonia.Game.Player
 
 
             bool wasOnGround = OnGround;
+            //if (_velocity.X != 0 || _velocity.Y != 0)SDebug.WriteLine(_velocity);
 
             OnGround = false;
-            if (Move(gameTime, _velocity * (0, 1)))
+            MVec2 velRecord = _velocity;
+            if (Move(gameTime, _velocity * (0, 1), velRecord))
             {
                 if (_velocity.Y < 0) OnGround = true;
                 _velocity.Y = 0;
             }
-            if (Move(gameTime, _velocity * (1, 0)))
+            if (Move(gameTime, _velocity * (1, 0), velRecord))
             {
                 _velocity.X = 0;
             }
@@ -253,9 +255,9 @@ namespace Mythonia.Game.Player
         /// <item><term><see langword="true"/></term> <description>发生碰撞</description></item>
         /// <item><term><see langword="false"/></term> <description>没有发生碰撞</description></item>
         /// </list></returns>
-        private bool Move(GameTime gameTime, MVec2 vel)
+        private bool Move(GameTime gameTime, MVec2 vel, MVec2 velRecord)
         {
-
+            bool coll;
             //移动
             vel *= gameTime.CFDuration();
             _position += vel;
@@ -267,10 +269,12 @@ namespace Mythonia.Game.Player
             //如果不存在碰撞，返回
             if (hitboxes is null) return false;
 
+            coll = true;
 
             //if (actionColl is not null) actionColl();
-            
-            if(vel.Y > 0)
+
+
+            if (vel.Y > 0)
             {
                 var posTemp2 = _position;
                 int range = 4;
@@ -288,31 +292,40 @@ namespace Mythonia.Game.Player
                 }
                 _position = posTemp2;
             }
-            else if (vel.X != 0 && _velocity.Y < 0)
+            else if (vel.X != 0)
             {
                 var posTemp2 = _position;
-                int range = 4;
-                int i = 1;
-                while (true)
+                /*if(velRecord.Y < 0)
                 {
-                    _position = posTemp2.Clone().Change(y: i);
-                    //如果不发生碰撞，返回
-                    if (!hitboxes.IsHit(Hitbox))
+                    int range = 4;
+                    int i = 1;
+                    while (true)
                     {
-                        if (HitUtility.GetHitTile(Map, Hitbox) is null)
-                            return false;
+                        _position = posTemp2.Clone().Change(y: i);
+                        //如果不发生碰撞，返回
+                        if (!hitboxes.IsHit(Hitbox))
+                        {
+                            if (HitUtility.GetHitTile(Map, Hitbox) is null)
+                                return false;
+                        }
+
+                        i++;
+                        if (i == range + 1) break;
+
                     }
+                }*/
 
-                    i++;
-                    if (i == range + 1) break;
-
-                }
-
+                //自动上一格平台
                 if (WalkKeyStatus != 0 && OnGround)
                 {
-                    _position = posTemp2.Clone().Change(y: 16);
-                    if (HitUtility.GetHitTile(Map, Hitbox) is null) _velocity.Y += 4;
-
+                    _position = posTemp2.Clone().Change(y: 17);
+                    if (HitUtility.GetHitTile(Map, Hitbox) is null)
+                    {
+                        //如果向上移动一格后不会碰撞，那么将施加一个朝 Y 正方向的力
+                        coll = false;
+                        _velocity.Y += 4.5f;
+                    }
+                    
                 }
 
                         _position = posTemp2;
@@ -337,7 +350,7 @@ namespace Mythonia.Game.Player
 
             
 
-            return true;
+            return coll;
         }
 
         /// <summary>
