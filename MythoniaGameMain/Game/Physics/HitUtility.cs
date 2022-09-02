@@ -1,5 +1,7 @@
 ﻿namespace Mythonia.Game.Physics
 {
+    
+
     public static class HitUtility
     {
 
@@ -110,7 +112,17 @@
             return hitHitboxes.IsEmpty() ? null : hitHitboxes;
         }
 
-        
+
+
+        #region Extension Methods
+
+        public static bool IsHit(this ICollection<RectangleHitbox> hitboxes, RectangleHitbox hitbox)
+        {
+            foreach (var hitbox2 in hitboxes) if (IsHit(hitbox, hitbox2)) return true;
+            return false;
+        }
+
+        #endregion
 
     }
 }
