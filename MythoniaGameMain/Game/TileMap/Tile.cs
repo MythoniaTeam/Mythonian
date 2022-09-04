@@ -250,7 +250,7 @@ namespace Mythonia.Game.TileMap
 
 
                 (false, false, true, true) => //左上角不连接
-                TextureConnectable(TileTopLeft) switch
+                TextureConnectable(TileBottomRight) switch
                 {
                     true => TextureBorderExtend.TL,
                     false => TextureBorderExtend.TL_Ag
@@ -358,7 +358,7 @@ namespace Mythonia.Game.TileMap
         public override string ToString()
         {
             //return ((char)this).ToString();
-            return TextureBorderType.ToString();
+            return $"({MapIndex} - {TextureBorderType}";
         }
 
         #endregion

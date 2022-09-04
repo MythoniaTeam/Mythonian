@@ -37,7 +37,7 @@ namespace Mythonia.Game.Player
         public bool JumpKeyReleased = true;
 
 
-        private const float WalkAcc = 0.4f;
+        private const float WalkAcc = 0.3f;
         private MLimit MaxWalkSpd = new(3);
 
         private const float Gravity = -0.5f;
@@ -47,11 +47,21 @@ namespace Mythonia.Game.Player
 
         private const int JumpsCountMax = 1;
         private int JumpsCount = 0;
-        private const int LeaveGroundJumpTime = 7;
+        private const int LeaveGroundJumpTime = 8;
         private int LeaveGroundTimeCount = -1;
+        private bool ApplyAutoJumpAcc = false;
 
 
         #endregion Prop - Physics
+
+        #region Prop - Debug
+
+#if DEBUG
+        private float CFDuration = 0;
+#endif
+
+        #endregion Prop - Debug
+
 
         #endregion
 
@@ -63,6 +73,11 @@ namespace Mythonia.Game.Player
         {
             Texture = game.TextureManager["TestPlayer"];
             Hitbox = new(MGame, () => Position, Texture.Size);
+
+            TextManager.Ins.WriteLine(() => $"Player Vel.X: {MathF.Round(_velocity.X, 2)}");
+            TextManager.Ins.WriteLine(() => $"Player Vel.Y: {MathF.Round(_velocity.Y, 2)}");
+            TextManager.Ins.WriteLine(() => $"CF Duration: {MathF.Round(CFDuration, 2)}");
+            
             
         }
 
@@ -114,6 +129,8 @@ namespace Mythonia.Game.Player
 
         public override void Update(GameTime gameTime)
         {
+            CFDuration = gameTime.CFDuration();
+
             base.Update(gameTime);
 
             /*if (HitUtility.GetHitTile(Map, HitboxFoot) is IList<RectangleHitbox> ground)
@@ -147,9 +164,25 @@ namespace Mythonia.Game.Player
                         JumpKeyReleased = false;
                         JumpsCount++;
                     }
-                    else if(JumpKeyReleased && keyPressTime <= 3)
+                    else if (JumpKeyReleased)
                     {
-                        _velocity.Y -= 1f;
+                        var posTemp = _position;
+                        _position += _velocity.SetNew(y: -1.2f * Hitbox.Size.Y);
+                        
+                        //如果再次按下按键且前下方有碰撞体，开始加速下坠
+                        if(!ApplyAutoJumpAcc && HitUtility.GetHitTile(Map, Hitbox) != null)
+                        {
+                            ApplyAutoJumpAcc = true;
+                            TextManager.Ins.WriteLine(() => "ApplyAutoJumpAcc", 100);
+                        }
+                        _position = posTemp;
+                    }
+                    
+                    if (ApplyAutoJumpAcc)
+                    {
+                        if(keyPressTime <= 6 && !OnGround && _velocity.Y < 0)
+                            _velocity.Y -= 1f;
+                        else ApplyAutoJumpAcc = false;
                     }
 
                 }
@@ -181,8 +214,6 @@ namespace Mythonia.Game.Player
                 (false, true) => 1, //按下右键
             };
 
-
-            
 
             if (!_velocity.X.IsInLimit(MaxWalkSpd) || WalkKeyStatus == 0)
             {
@@ -246,6 +277,8 @@ namespace Mythonia.Game.Player
 
         }
 
+
+
         /// <summary>
         /// 移动, 如果碰撞, 移动到合适的位置
         /// </summary>
@@ -281,7 +314,7 @@ namespace Mythonia.Game.Player
                 int i = 1;
                 while (true)
                 {
-                    _position = posTemp2.Clone().Change(x: i);
+                    _position = posTemp2.ChangeNew(x: i);
                     //如果不发生碰撞，返回
                     if (!hitboxes.IsHit(Hitbox)) 
                         return false;
@@ -301,7 +334,7 @@ namespace Mythonia.Game.Player
                     int i = 1;
                     while (true)
                     {
-                        _position = posTemp2.Clone().Change(y: i);
+                        _position = posTemp2.ChangeNew(y: i);
                         //如果不发生碰撞，返回
                         if (!hitboxes.IsHit(Hitbox))
                         {
@@ -318,7 +351,7 @@ namespace Mythonia.Game.Player
                 //自动上一格平台
                 if (WalkKeyStatus != 0 && OnGround)
                 {
-                    _position = posTemp2.Clone().Change(y: 17);
+                    _position = posTemp2.ChangeNew(y: 17);
                     if (HitUtility.GetHitTile(Map, Hitbox) is null)
                     {
                         //如果向上移动一格后不会碰撞，那么将施加一个朝 Y 正方向的力

@@ -1,4 +1,4 @@
-﻿
+﻿using System.Globalization;
 
 
 namespace Mythonia.Game
@@ -19,18 +19,22 @@ namespace Mythonia.Game
 
         public MGame() : base()
         {
+
             Graphics = new(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             TextureManager = new(this);
+            
         }
 
 
         //Texture2D tSprite;
-        
 
+        SpriteFont TestCNFont;
         protected override void Initialize()
         {
+            Strings.Culture = new("zh-CN");// CultureInfo.CurrentCulture;
+            SDebug.WriteLine(Strings.Culture);
 
             //IsFixedTimeStep = false;
             base.Initialize();
@@ -38,9 +42,12 @@ namespace Mythonia.Game
             SpriteBatch = new(GraphicsDevice);
             Main = new(this, TileSize);
 
+            Window.BeginScreenDeviceChange(false);
+            Window.EndScreenDeviceChange(GraphicsDevice.ToString(), 1366, 768);
             //tSprite = Content.Load<Texture2D>(@"Images\RECTANGLE");
 
             //MTextureManager.Add("")
+
 
         }
 
@@ -54,6 +61,7 @@ namespace Mythonia.Game
             TextureManager.AddTileTexture("Tile", TileSize);
                 
             TextureManager.AddNewTexture("TestPlayer");
+            TestCNFont = Content.Load<SpriteFont>("Fonts/File");
         }
 
         protected override void Update(GameTime gameTime)
@@ -69,6 +77,9 @@ namespace Mythonia.Game
             GraphicsDevice.Clear(new(0, 10, 30));
 
             SpriteBatch.Begin();
+
+            SpriteBatch.DrawString(TestCNFont, "这是一段测试文本", new(100, 100), Color.White);
+            //SpriteBatch.DrawString(Main.Text.DefaultFont, "这是玩家", new(100, 100), Color.White);
 
             base.Draw(gameTime);
 

@@ -19,7 +19,7 @@ namespace Mythonia.Game
 
         public KeyCodeList KeyCode;
 
-        private int[] _keyStates;
+        private readonly int[] _keyStates;
 
         public int this[KeyName keyName] => _keyStates[(int)keyName];
 
@@ -53,13 +53,13 @@ namespace Mythonia.Game
                 {
                     if (_keyStates[i] < 0) _keyStates[i] = 0;
 
-                    _keyStates[i] += gameTime.CFDuration();
+                    _keyStates[i] += 1;//(int)gameTime.CFDuration();
                 }
                 else
                 {
                     if (_keyStates[i] > 0) _keyStates[i] = 0;
 
-                    _keyStates[i] -= gameTime.CFDuration();
+                    _keyStates[i] -= 1;//(int)gameTime.CFDuration();
                 };
             };
         }
@@ -90,7 +90,7 @@ namespace Mythonia.Game
 
     public class KeyCodeList
     {
-        private Keys[] _keyCodes;
+        private readonly Keys[] _keyCodes;
 
         public Keys this[KeyName keyName] { get => _keyCodes[(int)keyName]; set => _keyCodes[(int)keyName] = value; }
 
