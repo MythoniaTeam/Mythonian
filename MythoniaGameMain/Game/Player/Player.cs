@@ -128,7 +128,6 @@ namespace Mythonia.Game.Player
             }*/
 
 
-
 #if DEBUG
             DebugUpdate();
 #endif

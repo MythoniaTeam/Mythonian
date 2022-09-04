@@ -15,7 +15,7 @@ namespace Mythonia.Debug
         
 #if DEBUG
         public static bool DrawTilesHitbox { get; set; } = true;
-#else          
+#else
         public static bool DrawTilesHitbox { get; set; } = false;
 #endif
 

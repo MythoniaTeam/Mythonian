@@ -58,7 +58,7 @@ namespace Mythonia.Game
             tranPos.Y *= -1;
             tranPos += MGame.GraphicsDevice.Size() / 2;
 
-            return (tranPos, direction - Direction, scale ?? MVec2.One * zScale);
+            return (tranPos, Direction - direction, scale ?? MVec2.One * zScale);
 
         }
 

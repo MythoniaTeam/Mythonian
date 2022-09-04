@@ -20,6 +20,8 @@ namespace Mythonia.Game
 
         public Player.Player Player { get; set; }
 
+        public Pen.Pen Pen { get; set; }
+
         public MGameMain(MGame game, Rectangle tileSize)
         {
             MGame = game;
@@ -42,7 +44,9 @@ namespace Mythonia.Game
              * 也可以使用这些返回布尔值的方法：KeyDown, KeyPress, KeyUp, KeyRelease
              */
 
-            Player = new Player.Player(MGame);
+            Player = new(MGame);
+
+            Pen = new(MGame);
 
             TileMap = Map.StringToMap(MGame, tileSize, new string[]
             {
@@ -82,6 +86,7 @@ namespace Mythonia.Game
             MGame.Components.Add(Input);
             MGame.Components.Add(TileMap);
             MGame.Components.Add(Player);
+            MGame.Components.Add(Pen);
         }
     }
 }

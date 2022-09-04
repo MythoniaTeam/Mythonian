@@ -29,6 +29,8 @@ namespace Mythonia.Sturctures
             }
         }
 
+        public Angle Direction => MathF.Atan2(Y, X) * 180 / MathF.PI;
+
         public (float X, float Y) ToFloat => (X, Y);
 
 
