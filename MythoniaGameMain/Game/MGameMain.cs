@@ -11,21 +11,26 @@ namespace Mythonia.Game
     {
 
         public Camera Camera { get; set; }
-
-        public Input Input { get; set; }
-
         public Map TileMap { get; set; }
+        public Player.Player Player { get; set; }
+
+
+        public Input Input { get; init; }
+        public TextManager Text { get; init; }
 
         public MGame MGame { get; init; }
 
-        public Player.Player Player { get; set; }
 
         public MGameMain(MGame game, Rectangle tileSize)
         {
             MGame = game;
 
-            Camera = new(MGame, 0, 0);
-
+            /*
+             * 可通过Input[KeyName keyName]来访问这些按键的状态
+             * 例：MGame.Main.Input[KeyName.Jump]
+             * 返回一个int表示按键状态
+             * 也可以使用这些返回布尔值的方法：KeyDown, KeyPress, KeyUp, KeyRelease
+             */
             Input = new(MGame, new Keys[] {
                 Keys.A,
                 Keys.D,
@@ -35,12 +40,8 @@ namespace Mythonia.Game
                 Keys.K
             });
 
-            /*
-             * 可通过Input[KeyName keyName]来访问这些按键的状态
-             * 例：MGame.Main.Input[KeyName.Jump]
-             * 返回一个int表示按键状态
-             * 也可以使用这些返回布尔值的方法：KeyDown, KeyPress, KeyUp, KeyRelease
-             */
+
+            Camera = new(MGame, 0, 0);
 
             Player = new Player.Player(MGame);
 
@@ -78,10 +79,20 @@ namespace Mythonia.Game
                 @"#####################################################################",
             });
 
+            var font = MGame.Content.Load<SpriteFont>("Fonts/Default");
+            Text = new TextManager(MGame, font);
+            MGame.Components.Add(Text);
+
             MGame.Components.Add(Camera);
             MGame.Components.Add(Input);
             MGame.Components.Add(TileMap);
             MGame.Components.Add(Player);
+
+            Text.DebugText.Add(() => "Debug Text Test");
+            Text.DebugText.Add(() => "Debug Text Test2");
+            Text.DebugText.Add(() => "Debug Text Test3");
+
+
         }
     }
 }

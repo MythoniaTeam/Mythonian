@@ -14,5 +14,8 @@ global using Mythonia.Sturctures;
 global using Mythonia.Game;
 global using Mythonia.Game.Physics;
 global using Mythonia.Game.TileMap;
+global using Mythonia.Game.UserInterface;
 
 global using Mythonia.Debug;
+
+global using Mythonia.Content.Fonts;

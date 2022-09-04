@@ -13,12 +13,22 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Default.spritefont
+#begin Fonts/Default.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Default.spritefont
+/build:Fonts/Default.spritefont
+
+#begin Fonts/File.spritefont
+/importer:FontDescriptionImporter
+/processor:LocalizedFontProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/File.spritefont
+
+#begin Fonts/sourcehanserifsc.ttf
+/copy:Fonts/sourcehanserifsc.ttf
 
 #begin Images/BouncingBomb.png
 /importer:TextureImporter
