@@ -176,9 +176,9 @@ namespace Mythonia.Game.TileMap
                         //如果没有break, 把这些砖块设为checked
                         if (!breakWhile)
                         {
+                            indexTo.Y++;
                             for (int x = (int)indexFr.X; x <= (int)indexTo.X; x++)
                             {
-                                indexTo.Y++;
                                 tileChecked[x, y] = true;
                                 tilesInclude.Add(this[x, y]);
                             }

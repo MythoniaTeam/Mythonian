@@ -148,12 +148,16 @@ namespace Mythonia.Sturctures
         /// <param name="x">X替换的值, 如果留空, 则为 <see langword="null"/>, 不会修改原有值</param>
         /// <param name="y">Y替换的值, 如果留空, 则为 <see langword="null"/>, 不会修改原有值</param>
         /// <returns>X / Y 改变后的向量</returns>
-        public MVec2 Replace(float? x = null, float? y = null)
+        public MVec2 Set(float? x = null, float? y = null)
         {
             if (x is float x2) X = x2;
             if (y is float y2) Y = y2;
             return this;
         }
+        public MVec2 SetNew(float? x = null, float? y = null) => Clone().Set(x, y);
+        public MVec2 ChangeNew(float? x = null, float? y = null) => Clone().Change(x, y);
+
+
 
 
         #endregion Methods
