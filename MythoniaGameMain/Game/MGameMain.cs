@@ -40,11 +40,6 @@ namespace Mythonia.Game
                 Keys.K
             });
 
-
-            Camera = new(MGame, 0, 0);
-
-            Player = new Player.Player(MGame);
-
             TileMap = Map.StringToMap(MGame, tileSize, new string[]
             {
 
@@ -52,16 +47,16 @@ namespace Mythonia.Game
                 @"                                                                 ##  ",
                 @"                                                                  |  ",
                 @"                                                                  |  ",
-                @"                                                              ####|  ",
-                @"                                                                  |  ",
-                @"                                                                  |  ",
-                @"                                                                  |  ",
-                @"                                                            ####  |  ",
-                @"                                                                  |  ",
-                @"                                                                  |  ",
-                @"                                                                  |  ",
-                @"                                                          ####    |  ",
-                @"                                                                  |  ",
+                @"            ##  ##   ##   # #   ## # # #  ### #   #           ####|  ",
+                @"           #### ### #### ##### ####### ## ### #                   |  ",
+                @"           ####  ##  ##   ### #           ### #      #            |  ",
+                @"            ##  ###   #  ############# ##                         |  ",
+                @"                ##   ###  # # # ## # # #  ### #         #   ####  |  ",
+                @"                     ###            ## ##                         |  ",
+                @"                      #              # #                          |  ",
+                @"                                    ## ##                         |  ",
+                @"                                    ## ##                 ####    |  ",
+                @"                                     # #                          |  ",
                 @"                                                                  |  ",
                 @"                                                                  |  ",
                 @"                                                        ####         ",
@@ -81,16 +76,22 @@ namespace Mythonia.Game
 
             var font = MGame.Content.Load<SpriteFont>("Fonts/Default");
             Text = new TextManager(MGame, font);
-            MGame.Components.Add(Text);
+
+
+            Camera = new(MGame, 0, 0);
+
+            Player = new Player.Player(MGame);
+
 
             MGame.Components.Add(Camera);
             MGame.Components.Add(Input);
             MGame.Components.Add(TileMap);
             MGame.Components.Add(Player);
+            MGame.Components.Add(Text);
 
-            Text.DebugText.Add(() => "Debug Text Test");
-            Text.DebugText.Add(() => "Debug Text Test2");
-            Text.DebugText.Add(() => "Debug Text Test3");
+
+
+
 
 
         }

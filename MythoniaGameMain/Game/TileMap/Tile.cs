@@ -358,7 +358,7 @@ namespace Mythonia.Game.TileMap
         public override string ToString()
         {
             //return ((char)this).ToString();
-            return TextureBorderType.ToString();
+            return $"({MapIndex} - {TextureBorderType}";
         }
 
         #endregion
