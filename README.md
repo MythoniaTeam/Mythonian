@@ -39,8 +39,8 @@ Issue之间应该用 英文逗号 + 空格 `, ` 分隔
 合并分支的commit信息应该如下格式
 ```[merge-TYPE](SCOPE) FROM-BRANCH => TO-BRANCH: 概要(可留空) (#5)```
 
-TYPE为该分支所有更改的类型概要
-FROM-BRANCH 为合并的来源分支
-TO-BRANCH 为合并的目标分支
+- TYPE: 该分支所有更改的类型概要  
+- FROM-BRANCH: 合并的源分支  
+- TO-BRANCH: 合并的目标分支  
 
-其余项目和一般Commit类似
+其余项目和一般Commit相同
