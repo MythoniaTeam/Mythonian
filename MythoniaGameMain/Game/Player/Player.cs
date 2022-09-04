@@ -464,11 +464,11 @@ namespace Mythonia.Game.Player
             MGame.SpriteBatch.Draw(Texture, scrPos, null, Color.White, 0, Texture.Size / 2, 1, SpriteEffects.None, 0);
 
 #if DEBUG
-            if (MDebug.DrawEntitiesHitbox)
-            {
-                Hitbox.DrawHitbox(new(150,255,160,150));
-                //HitboxFoot.DrawHitbox(new(50,0, 0, 100));
-            }
+            //if (MDebug.DrawEntitiesHitbox)
+            //{
+            //    Hitbox.DrawHitbox(new(150,255,160,150));
+            //    //HitboxFoot.DrawHitbox(new(50,0, 0, 100));
+            //}
 #endif
         }
 

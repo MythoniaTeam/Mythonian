@@ -58,6 +58,7 @@ namespace Mythonia.Game.TileMap
             ' ',
             '#',
             '|',
+            '@'
         });
 
         #endregion

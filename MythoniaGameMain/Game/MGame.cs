@@ -59,8 +59,8 @@ namespace Mythonia.Game
             PX = Content.Load<Texture2D>("Images/PX");
 
             TextureManager.AddTileTexture("Tile", TileSize);
-                
             TextureManager.AddNewTexture("TestPlayer");
+            
             TestCNFont = Content.Load<SpriteFont>("Fonts/File");
         }
 
@@ -76,7 +76,7 @@ namespace Mythonia.Game
         {
             GraphicsDevice.Clear(new(0, 10, 30));
 
-            SpriteBatch.Begin();
+            SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             SpriteBatch.DrawString(TestCNFont, "这是一段测试文本", new(100, 100), Color.White);
             //SpriteBatch.DrawString(Main.Text.DefaultFont, "这是玩家", new(100, 100), Color.White);
