@@ -9,10 +9,10 @@ namespace Mythonia.Game
     /// </summary>
     public class MGameMain
     {
+        public Map TileMap { get; set; }
 
         public Camera Camera { get; set; }
-        public Map TileMap { get; set; }
-        public Player.Player Player { get; set; }
+        public Player Player { get; set; }
 
 
         public Input Input { get; init; }
@@ -80,7 +80,7 @@ namespace Mythonia.Game
 
             Camera = new(MGame, 0, 0);
 
-            Player = new Player.Player(MGame);
+            Player = new Player(MGame, TileMap);
 
 
             MGame.Components.Add(Camera);

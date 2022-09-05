@@ -12,9 +12,12 @@ global using Microsoft.Xna.Framework.Input;
 
 global using Mythonia.Sturctures;
 global using Mythonia.Game;
+global using Mythonia.Game.Sprites;
 global using Mythonia.Game.Physics;
 global using Mythonia.Game.TileMap;
 global using Mythonia.Game.UserInterface;
+global using Mythonia.Game.Draw;
+global using Mythonia.Game.Draw.Texture;
 
 global using Mythonia.Debug;
 

@@ -2,7 +2,7 @@
 
 
 
-namespace Mythonia.Game
+namespace Mythonia.Game.Draw
 {
 
     public class Camera : GameComponent
@@ -47,25 +47,28 @@ namespace Mythonia.Game
 
         #region Methods
 
-        public (MVec2 scrPos, Angle direction, MVec2 scale) Transform(MVec3 pos, Angle direction = default, MVec2? scale = null)
+        public Transform Transform(Transform transform)
         {
 
-            float zScale = Scale / ((Pos.Z - pos.Z - Focus) / Focus);
-            MVec2 tranPos = (MVec2)(pos - Pos) * zScale;
+            float zScale = Scale / ((Pos.Z - transform.Position.Z - Focus) / Focus);
+            MVec2 tranPos = (MVec2)(transform.Position - Pos) * zScale;
 
             tranPos.Rotation(-Direction);
 
             tranPos.Y *= -1;
             tranPos += MGame.GraphicsDevice.Size() / 2;
+            Angle direction = transform.Direction - Direction;
+            if(transform.FlipX && transform.FlipY) direction += 180f;
+            direction *= -1;
 
-            return (tranPos, direction - Direction, scale ?? MVec2.One * zScale);
+            return (tranPos, direction, transform.Scale * zScale, transform.FlipX, transform.FlipY);
 
         }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            Pos = new(MGame.Main.Player.Position, Pos.Z);//方便测试先改成这样
+            Pos = MGame.Main.Player.Position.SetNew(z: Pos.Z);//方便测试先改成这样
             /*
             if (FollowPlayer)
             {

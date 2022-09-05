@@ -2,29 +2,22 @@
 
 
 
-namespace Mythonia.Game.Player
+namespace Mythonia.Game.Sprites
 {
-    public class Player : DrawableGameComponent
+    public class Player : Entity
     {
 
 
 
         #region Prop
 
-        public MGame MGame => (MGame)Game;
         public Input Input => MGame.Main.Input;
 
-        public Map Map => MGame.Main.TileMap;
 
-        public MTexture Texture { get; private set; }
 
 
         #region Prop - Physics
 
-        public MVec2 Position { get => _position; set => _position = value; }
-        private MVec2 _position = (0, 40);
-        public MVec2 Velocity { get => _velocity; set => _velocity = value; }
-        private MVec2 _velocity = (0, 0);
 
         public RectangleHitbox Hitbox { get; private set; }
 
@@ -69,16 +62,13 @@ namespace Mythonia.Game.Player
 
         #region Constructor
 
-        public Player(MGame game) : base(game)
+        public Player(MGame game, Map map) : base("Player", game, map, game.TextureManager["TestPlayer"], (0,40))
         {
-            Texture = game.TextureManager["TestPlayer"];
-            Hitbox = new(MGame, () => Position, Texture.Size);
+            Hitbox = new(MGame, () => (MVec2)Position, Texture.Size);
 
             TextManager.Ins.WriteLine(() => $"Player Vel.X: {MathF.Round(_velocity.X, 2)}");
             TextManager.Ins.WriteLine(() => $"Player Vel.Y: {MathF.Round(_velocity.Y, 2)}");
             TextManager.Ins.WriteLine(() => $"CF Duration: {MathF.Round(CFDuration, 2)}");
-            
-            
         }
 
         #endregion
@@ -119,7 +109,7 @@ namespace Mythonia.Game.Player
             }
             if (key.IsKeyDown(Keys.R))
             {
-                Position = (0, 40);
+                Position = (0, 40, 0);
                 Velocity = (0, 0);
             }
         }
@@ -132,19 +122,6 @@ namespace Mythonia.Game.Player
             CFDuration = gameTime.CFDuration();
 
             base.Update(gameTime);
-
-            /*if (HitUtility.GetHitTile(Map, HitboxFoot) is IList<RectangleHitbox> ground)
-            {
-                OnHitbox = ground;
-                OnGround = true;
-                if (_velocity.Y < 0) _velocity.Y = 0;
-            }
-            else
-            {
-                OnGround = false;
-            }*/
-
-
 
 #if DEBUG
             DebugUpdate();
@@ -193,20 +170,24 @@ namespace Mythonia.Game.Player
                 JumpKeyReleased = true;
             }
 
-
             if (!JumpKeyReleased && _velocity.Y > 0)
             {
                 //如果按下跳跃键, 且 Y 速度 > 0
+                //增加抵消后的重力
                 _velocity.Y += (Gravity + JumpKeyPressAcc) * gameTime.CFDuration();
             }
             else if (_velocity.Y >= -MaxFallingSpd)
             {
                 //如果松开跳跃键 或 Y 速度 <= 0 且未达到最大坠落速度
+                //增加重力
                 _velocity.Y += Gravity * gameTime.CFDuration();
+                //如果超出最大坠落速度，限制到范围内
                 if (_velocity.Y < -MaxFallingSpd) _velocity.Y = -MaxFallingSpd;
             }
 
 
+
+            //检测 [左右键] 设置 WalkKeyStatus
             WalkKeyStatus = (Input.KeyDown(KeyName.Left), Input.KeyDown(KeyName.Right)) switch
             {
                 (true, true) or (false, false) => 0,
@@ -214,14 +195,12 @@ namespace Mythonia.Game.Player
                 (false, true) => 1, //按下右键
             };
 
-
             if (!_velocity.X.IsInLimit(MaxWalkSpd) || WalkKeyStatus == 0)
             {
                 //如果速度超出范围，或松开移动键
-
+                //如果 X 速度 < 减速度，直接归零
                 if (MathF.Abs(_velocity.X) <= WalkAcc * gameTime.CFDuration())
                 {
-                    //如果 X 速度 < 减速度，直接归零
                     _velocity.X = 0;
                 }
                 else
@@ -240,13 +219,15 @@ namespace Mythonia.Game.Player
             }
 
 
-            bool wasOnGround = OnGround;
-            //if (_velocity.X != 0 || _velocity.Y != 0)SDebug.WriteLine(_velocity);
 
+            bool wasOnGround = OnGround;
             OnGround = false;
+
+            //分解 X Y 速度移动
             MVec2 velRecord = _velocity;
             if (Move(gameTime, _velocity * (0, 1), velRecord))
             {
+                //如果向下移动且碰撞，表示在地面上
                 if (_velocity.Y < 0) OnGround = true;
                 _velocity.Y = 0;
             }
@@ -255,6 +236,7 @@ namespace Mythonia.Game.Player
                 _velocity.X = 0;
             }
             //_velocity.X *= ResisX;
+
 
 
             if (OnGround)
@@ -271,6 +253,7 @@ namespace Mythonia.Game.Player
 
             if (LeaveGroundTimeCount >= 0)
             {
+                //如果开始计时，把计时器加一
                 LeaveGroundTimeCount += 1;
                 if (LeaveGroundTimeCount > LeaveGroundJumpTime) JumpsCount++;
             }
@@ -393,7 +376,7 @@ namespace Mythonia.Game.Player
         /// <param name="hitboxes"></param>
         /// <param name="posTemp"></param>
         /// <param name="vel"></param>
-        private void CheckMove(IList<RectangleHitbox> hitboxes, MVec2 posTemp, MVec2 vel)
+        private void CheckMove(IList<RectangleHitbox> hitboxes, MVec3 posTemp, MVec2 vel)
         {
             List<RectangleHitbox> removeList = new();
 
@@ -460,8 +443,9 @@ namespace Mythonia.Game.Player
         
         public override void Draw(GameTime gameTime)
         {
-            var (scrPos, _, _) = MGame.Main.Camera.Transform(Position);
-            MGame.SpriteBatch.Draw(Texture, scrPos, null, Color.White, 0, Texture.Size / 2, 1, SpriteEffects.None, 0);
+            //var (scrPos, _, _) = MGame.Main.Camera.Transform(Position);
+            //MGame.SpriteBatch.Draw(Texture, scrPos, null, Color.White, 0, Texture.Size / 2, 1, SpriteEffects.None, 0);
+            DrawManager.Ins.Draw(this);
 
 #if DEBUG
             //if (MDebug.DrawEntitiesHitbox)
