@@ -47,8 +47,9 @@ namespace Mythonia.Game
         protected override void LoadContent()
         {
             base.LoadContent();
-            TextureManager = new(this);
             DrawManager = new(this);
+            Components.Add(DrawManager);
+            TextureManager = new(this);
         }
 
         protected override void Update(GameTime gameTime)
@@ -63,7 +64,7 @@ namespace Mythonia.Game
         {
             GraphicsDevice.Clear(new(0, 10, 30));
 
-            SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
 
 
             base.Draw(gameTime);

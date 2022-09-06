@@ -62,9 +62,10 @@ namespace Mythonia.Game.Sprites
 
         #region Constructor
 
-        public Player(MGame game, Map map) : base("Player", game, map, game.TextureManager["TestPlayer"], (0,40))
+        public Player(MGame game, Map map) : base("Player", game, map, game.TextureManager["BouncingBomb"].PlayAnimation(), (0,40))
         {
-            Hitbox = new(MGame, () => (MVec2)Position, Texture.Size);
+            Scale = (2, 2);
+            Hitbox = new(MGame, () => (MVec2)Position, Texture.Size * Scale);
 
             TextManager.Ins.WriteLine(() => $"Player Vel.X: {MathF.Round(_velocity.X, 2)}");
             TextManager.Ins.WriteLine(() => $"Player Vel.Y: {MathF.Round(_velocity.Y, 2)}");

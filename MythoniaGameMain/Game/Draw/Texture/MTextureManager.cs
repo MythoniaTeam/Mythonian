@@ -21,9 +21,9 @@ namespace Mythonia.Game.Draw.Texture
         {
             PX = Content.Load<Texture2D>("Images/PX");
 
-            Add(new TileTexture(Content, "Tile", TileSize));
-            Add(new MTexture(Content, "TestPlayer"));
-            Add(new MTexture(Content, "BouncingBomb").SecTexture(4));
+            Add(new TileTexture(MGame, Content, "Tile", TileSize));
+            Add(new MTexture(MGame, Content, "TestPlayer"));
+            Add(new MTexture(MGame, Content, "BouncingBomb").SecTexture(4).AddAnimation());
 
             TestCNFont = Content.Load<SpriteFont>("Fonts/File");
         }

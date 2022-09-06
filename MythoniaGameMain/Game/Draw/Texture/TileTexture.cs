@@ -62,7 +62,7 @@ namespace Mythonia.Game.Draw.Texture
             Tile.TextureBorderExtend.No_AgNoBR
 
         };
-        public TileTexture(ContentManager content, string name, Rectangle gridSize) : base(content, name)
+        public TileTexture(MGame game, ContentManager content, string name, Rectangle gridSize) : base(game, content, name)
         {
             SecAsTile(gridSize);
             

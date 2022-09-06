@@ -14,6 +14,7 @@ namespace Mythonia.Game.Draw.Texture
         public AnimationMeta CurrentAnimation { get; set; }
         public MTexture Texture { get; init; }
 
+        public MVec2 Size => Texture.Size;
 
         private float _timeCount = 0;
         private int CurrentFrameNo
@@ -21,7 +22,7 @@ namespace Mythonia.Game.Draw.Texture
             get => _currentFrameNo;
             set
             {
-                _currentFrameNo = CurrentFrameNo;
+                _currentFrameNo = value;
                 if (_currentFrameNo >= CurrentAnimation.Length) _currentFrameNo = 0;
             }
         }
@@ -31,10 +32,11 @@ namespace Mythonia.Game.Draw.Texture
 
 
 
-        public AnimationPlayer(MGame game, MTexture texture)
+        public AnimationPlayer(MGame game, MTexture texture, AnimationMeta animation)
         {
             Texture = texture;
             game.DrawManager.AddAnimationPlayer(this);
+            CurrentAnimation = animation;
         }
 
 

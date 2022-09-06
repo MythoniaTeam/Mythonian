@@ -14,7 +14,7 @@ namespace Mythonia.Game.Sprites
         public Map Map { get; init; }
 
 
-        public MTexture Texture { get; protected set; }
+        public ITexture Texture { get; protected set; }
         public virtual Rectangle TextureSourceRange => Texture.GetSourceRange();
 
         protected MVec3 _position;
@@ -58,7 +58,7 @@ namespace Mythonia.Game.Sprites
 
         #region Constructors
 
-        public Sprite(string name, MGame game, Map map, MTexture texture, MVec3? position = null) : base(game)
+        public Sprite(string name, MGame game, Map map, ITexture texture, MVec3? position = null) : base(game)
         {
             Map = map;
             Name = name;

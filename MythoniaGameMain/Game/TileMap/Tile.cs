@@ -10,7 +10,7 @@ namespace Mythonia.Game.TileMap
 
         public int Id { get; init; }
 
-        public override Rectangle TextureSourceRange => Texture.SubTextures[TextureBorderType.ToString()];
+        public override Rectangle TextureSourceRange => ((MTexture)Texture).Frames[TextureBorderType.ToString()].Range;
 
         public TextureBorderExtend TextureBorderType { get; private set; } = TextureBorderExtend.All;
 

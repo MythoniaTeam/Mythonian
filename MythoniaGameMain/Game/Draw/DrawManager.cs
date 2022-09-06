@@ -4,17 +4,16 @@
 
 namespace Mythonia.Game.Draw
 {
-    public class DrawManager
+    public class DrawManager : GameComponent
     {
         public static DrawManager Ins { get; private set; }
 
 
-        public MGame MGame { get; init; }
+        public MGame MGame => (MGame)Game;
 
-        public DrawManager(MGame game)
+        public DrawManager(MGame game) : base(game)
         {
             Ins ??= this;
-            MGame = game;
         }
 
 
@@ -34,12 +33,17 @@ namespace Mythonia.Game.Draw
             }
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            AnimationUpdate(gameTime);
+        }
 
-        public void Draw(SpriteBatch spriteBatch, Camera camera, MTexture texture, Rectangle sourceRange, Transform transform)
+
+        public void Draw(SpriteBatch spriteBatch, Camera camera, ITexture texture, Rectangle sourceRange, Transform transform)
         {
             var (screenPos, screenDirection, scale, _, _) = camera.Transform(transform).ToTuple;
             
-            spriteBatch.Draw(texture, 
+            spriteBatch.Draw(texture.RawTexture, 
                 (MVec2)screenPos, 
                 sourceRange, 
                 Color.White, 

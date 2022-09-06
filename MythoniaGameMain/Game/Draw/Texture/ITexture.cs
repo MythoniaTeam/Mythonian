@@ -11,6 +11,8 @@ namespace Mythonia.Game.Draw.Texture
     {
         Texture2D RawTexture { get; }
 
+        MVec2 Size { get; }
+
         Rectangle GetSourceRange();
     }
 }

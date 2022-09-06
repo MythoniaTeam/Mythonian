@@ -40,7 +40,7 @@ namespace Mythonia.Game.Physics
         {
             var (scrPos, scrDir, scale, _, _) =
                 MGame.Main.Camera.Transform(new(Position)).ToTuple;
-            MGame.SpriteBatch.Draw(MTextureManager.Ins.PX, (MVec2)scrPos, null, color, scrDir, Size/2, scale, SpriteEffects.None, 0);
+            MGame.SpriteBatch.Draw(MTextureManager.Ins.PX, (MVec2)scrPos, null, color, scrDir, new MVec2(1, 1) / 2, scale * Size, SpriteEffects.None, 1);
         }
     }
 }

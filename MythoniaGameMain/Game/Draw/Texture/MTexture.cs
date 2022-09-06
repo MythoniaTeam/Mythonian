@@ -4,10 +4,11 @@
 
 namespace Mythonia.Game.Draw.Texture
 {
-    public class MTexture: ITexture
+    public class MTexture: ITexture, INamed
     {
-        private readonly string _name;
-        public string Name => _name;
+        public string Name { get; init; }
+
+        public MGame MGame { get; init; }
 
         public Texture2D RawTexture { get; init; }
 
@@ -22,27 +23,31 @@ namespace Mythonia.Game.Draw.Texture
         /// <summary>
         /// 帧图的名称和对应范围
         /// </summary>
-        public Dictionary<string, Rectangle> SubTextures { get; init; } = new();
+        public NamedList<Frame> Frames { get; init; } = new();
+
+        public NamedList<AnimationMeta> Animations { get; init; } = new();
 
 
 
-        public MTexture(ContentManager content, string name, ICollection<(string Name, Rectangle Range)>? subtextures = null)
+        public MTexture(MGame game, ContentManager content, string name, ICollection<(string Name, Rectangle Range)>? subtextures = null)
         {
+            MGame = game;
+
             RawTexture = content.Load<Texture2D>("Images/" + name);
             Size = new MVec2(RawTexture.Width, RawTexture.Height);
 
-            _name = name;
+            Name = name;
             if (subtextures is not null)
             foreach(var sub in subtextures)
             {
-                SubTextures.Add(sub.Name, sub.Range);
+                Frames.Add(new(sub.Name, sub.Range));
             }
         }
 
 
 
         /// <summary>
-        /// 按照行、列数分割帧图, 保存到 <see cref="SubTextures"/> 中
+        /// 按照行、列数分割帧图, 保存到 <see cref="Frames"/> 中
         /// </summary>
         /// <param name="column">列数</param>
         /// <param name="row">行数</param>
@@ -51,7 +56,7 @@ namespace Mythonia.Game.Draw.Texture
         /// <returns><see langword="this"/></returns>
         public MTexture SecTexture(int column, int row = 1, int? no = null, IList<string>? subtexturesname = null)
         {
-             MVec2 gridSize = (RawTexture.Width / column, RawTexture.Height / row);
+            Size = (RawTexture.Width / column, RawTexture.Height / row);
 
             no ??= column * row;
             subtexturesname ??= new List<string>();
@@ -65,13 +70,58 @@ namespace Mythonia.Game.Draw.Texture
                 {
                     int index = y * column + x;
                     if (index >= no) break;
-                    SubTextures.Add(subtexturesname[index], new((x, y) * gridSize, gridSize));
+                    Frames.Add(new(subtexturesname[index], new((x, y) * Size, Size)));
                 }
             }
 
             return this;
         }
 
+        
+
+        public MTexture AddAnimation(string name, float duration, int[] frames)
+        {
+            Animations.Add(new(this, name, duration, frames));
+            return this;
+        }
+        public MTexture AddAnimation(string name = "Default", float duration = 10, int frameStart = 0, int? frameEnd = null)
+        {
+            int frameEnd2 = frameEnd ?? Frames.Count - 1;
+            int[] frames = new int[frameEnd2 - frameStart + 1];
+            for (int i = 0; i < frames.Length; i++)
+            {
+                frames[i] = i;
+            }
+            AddAnimation(name, duration, frames);
+            return this;
+        }
+
+        public MTexture AddAnimations(IList<(string name, float duration, int[] frames)> animations)
+        {
+            foreach(var (name, duration, frames) in animations)
+            {
+                AddAnimation(name, duration, frames);
+            }
+
+            return this;
+        }
+        
+
+        public MTexture AddAnimations(IList<(string name, float duration, int frameStart, int frameEnd)> animations)
+        {
+            List<(string name, float duration, int[] frames)> animations2 = new();
+            foreach(var (name, duration, frameStart, frameEnd) in animations)
+            {
+                AddAnimation(name, duration, frameStart, frameEnd);
+            }
+
+            return this;
+        }
+
+        public AnimationPlayer PlayAnimation(string name = "Default")
+        {
+            return new(MGame, this, Animations[name]);
+        }
 
 
 
