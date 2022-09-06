@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Mythonia.Sturctures
 {
-    public struct MVec3
+    public struct MVec3 : ICloneable
     {
         private Vector3 _v;
 
@@ -44,13 +44,23 @@ namespace Mythonia.Sturctures
         public void Deconstruct(out float x, out float y, out float z) => _v.Deconstruct(out x, out y, out z);
 
 
-        public MVec3 Replace(float? x = null, float? y = null, float? z = null)
+        public MVec3 Set(float? x = null, float? y = null, float? z = null)
         {
             if (x is float x2) X = x2;
             if (y is float y2) Y = y2;
             if (z is float z2) Z = z2;
             return this;
         }
+        public MVec3 SetNew(float? x = null, float? y = null, float? z = null) => Clone().Set(x, y, z);
+        public MVec3 Change(float? x = null, float? y = null, float? z = null)
+        {
+            if (x is float x2) X += x2;
+            if (y is float y2) Y += y2;
+            if (z is float z2) Z += z2;
+            return this;
+        }
+        public MVec3 ChangeNew(float? x = null, float? y = null, float? z = null) => Clone().Change(x, y, z);
+
 
         #endregion Methods
 
@@ -61,6 +71,8 @@ namespace Mythonia.Sturctures
         public override string ToString() => _v.ToString();
         public override bool Equals([NotNullWhen(true)] object obj) => _v.Equals(obj);
         public override int GetHashCode() => _v.GetHashCode();
+        object ICloneable.Clone() => Clone();
+        public MVec3 Clone() => new(X, Y, Z);
 
         #endregion
 

@@ -5,12 +5,13 @@
 namespace Mythonia.Game.TileMap
 {
 
-    public class Tile : GameComponent
+    public class Tile : Sprite
     {
 
         public int Id { get; init; }
 
-        public MTexture Texture { get; set; }
+        public override Rectangle TextureSourceRange => ((MTexture)Texture).Frames[TextureBorderType.ToString()].Range;
+
         public TextureBorderExtend TextureBorderType { get; private set; } = TextureBorderExtend.All;
 
 
@@ -24,20 +25,17 @@ namespace Mythonia.Game.TileMap
             }
         }
 
-        public RectangleHitbox Hitbox { get; set; }
+        public RectangleHitbox? Hitbox { get; set; }
 
-        public MVec2 Position => MapIndex * Map.TileSizeVec;
 
 
         #region Prop Map
 
-        private readonly Map _map;
 
-        private MVec2? _mapIndex;
+        private readonly MVec2? _mapIndex;
 
-        public Map Map => _map;
         public MVec2 MapIndex => _mapIndex ?? throw new IndexOutOfRangeException($"The Tile {this} doesn't have an index (not in a map)");
-        public Tile? GetTile(MVec2 displacement) => (_mapIndex is MVec2 index /*&& _map is Map map*/) ? _map[index + displacement] : null;
+        public Tile? GetTile(MVec2 displacement) => (_mapIndex is MVec2 index /*&& _map is Map map*/) ? Map[index + displacement] : null;
 
         public Tile? TileTopLeft  => GetTile(MVec2.Dir9.TopLeft);
         public Tile? TileTop      => GetTile(MVec2.Dir9.Top);
@@ -58,6 +56,7 @@ namespace Mythonia.Game.TileMap
             ' ',
             '#',
             '|',
+            '@'
         });
 
         #endregion
@@ -66,10 +65,9 @@ namespace Mythonia.Game.TileMap
 
         #region Constructor
 
-        private Tile(MGame game, int id, Map map, MVec2 index) : base(game)
+        private Tile(MGame game, int id, Map map, MVec2 index) : base($"Tile-{index}", game, map, game.TextureManager["Tile"], index * map.TileSizeVec)
         {
             Id = id;
-            _map = map;
             _mapIndex = index;//map?.FindIndex(this);
 
             if (id != 0) HasColl = true; else HasColl = false;
@@ -369,8 +367,9 @@ namespace Mythonia.Game.TileMap
 
         public void Draw(SpriteBatch spriteBatch, Camera cam)//, GameTime gameTime)
         {
-            var (scrPos, _, scale) = cam.Transform(new(Position));
-            spriteBatch.Draw(Texture, scrPos, Texture.SubTextures[TextureBorderType.ToString()], Color.White, 0, Texture.Size / 2, scale, SpriteEffects.None, 0);
+            //var (scrPos, _, scale) = cam.Transform(new(Position));
+            //spriteBatch.Draw(Texture, scrPos, Texture.SubTextures[TextureBorderType.ToString()], Color.White, 0, Texture.Size / 2, scale, SpriteEffects.None, 0);
+            DrawManager.Ins.Draw(this);
         }
 
         #endregion

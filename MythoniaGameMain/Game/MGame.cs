@@ -7,14 +7,14 @@ namespace Mythonia.Game
     {
         public GraphicsDeviceManager Graphics { get; init; }
 
-        public MTextureManager TextureManager { get; init; }
+        public MTextureManager TextureManager { get; private set; }
         public SpriteBatch SpriteBatch { get; set; }
+        public DrawManager DrawManager { get; private set; }
 
         public MGameMain Main { get; set; }
 
 
 
-        public Rectangle TileSize { get; init; } = new(0, 0, 16, 16);
 
 
         public MGame() : base()
@@ -23,45 +23,33 @@ namespace Mythonia.Game
             Graphics = new(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            TextureManager = new(this);
             
         }
 
 
-        //Texture2D tSprite;
 
-        SpriteFont TestCNFont;
         protected override void Initialize()
         {
             Strings.Culture = new("zh-CN");// CultureInfo.CurrentCulture;
             SDebug.WriteLine(Strings.Culture);
 
-            //IsFixedTimeStep = false;
             base.Initialize();
+            //IsFixedTimeStep = false;
 
+            Main = new(this, MTextureManager.Ins.TileSize);
             SpriteBatch = new(GraphicsDevice);
-            Main = new(this, TileSize);
 
             Window.BeginScreenDeviceChange(false);
             Window.EndScreenDeviceChange(GraphicsDevice.ToString(), 1366, 768);
-            //tSprite = Content.Load<Texture2D>(@"Images\RECTANGLE");
-
-            //MTextureManager.Add("")
-
 
         }
 
-        public Texture2D PX { get; private set; }
         protected override void LoadContent()
         {
             base.LoadContent();
-
-            PX = Content.Load<Texture2D>("Images/PX");
-
-            TextureManager.AddTileTexture("Tile", TileSize);
-                
-            TextureManager.AddNewTexture("TestPlayer");
-            TestCNFont = Content.Load<SpriteFont>("Fonts/File");
+            DrawManager = new(this);
+            Components.Add(DrawManager);
+            TextureManager = new(this);
         }
 
         protected override void Update(GameTime gameTime)
@@ -76,10 +64,8 @@ namespace Mythonia.Game
         {
             GraphicsDevice.Clear(new(0, 10, 30));
 
-            SpriteBatch.Begin();
+            SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
 
-            SpriteBatch.DrawString(TestCNFont, "这是一段测试文本", new(100, 100), Color.White);
-            //SpriteBatch.DrawString(Main.Text.DefaultFont, "这是玩家", new(100, 100), Color.White);
 
             base.Draw(gameTime);
 

@@ -38,9 +38,9 @@ namespace Mythonia.Game.Physics
 
         public void DrawHitbox(Color color)
         {
-            var (scrPos, _, scale) =
-                MGame.Main.Camera.Transform(Position, scale: Size);
-            MGame.SpriteBatch.Draw(MGame.PX, scrPos, null, color, 0, new(0.5f, 0.5f), scale, SpriteEffects.None, 0);
+            var (scrPos, scrDir, scale, _, _) =
+                MGame.Main.Camera.Transform(new(Position)).ToTuple;
+            MGame.SpriteBatch.Draw(MTextureManager.Ins.PX, (MVec2)scrPos, null, color, scrDir, new MVec2(1, 1) / 2, scale * Size, SpriteEffects.None, 1);
         }
     }
 }
