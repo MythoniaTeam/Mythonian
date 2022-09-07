@@ -123,6 +123,21 @@ namespace Mythonia.Game.Draw.Texture
             return new(MGame, this, Animations[name]);
         }
 
+        public virtual void Draw(SpriteBatch spriteBatch, Camera camera, Rectangle sourceRange, Transform transform)
+        {
+            var (screenPos, screenDirection, scale) = camera.Transform(transform).ToTuple;
+
+            spriteBatch.Draw(RawTexture,
+                (MVec2)screenPos,
+                sourceRange,
+                Color.White,
+                screenDirection,
+                Size / 2,
+                scale,
+                transform.SpriteEffects,
+                0);
+        }
+
 
 
         #region Implement - ITexture

@@ -14,5 +14,7 @@ namespace Mythonia.Game.Draw.Texture
         MVec2 Size { get; }
 
         Rectangle GetSourceRange();
+
+        void Draw(SpriteBatch spriteBatch, Camera camera, Rectangle sourceRange, Transform transform);
     }
 }

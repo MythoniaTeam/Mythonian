@@ -239,7 +239,7 @@ namespace Mythonia.Game.TileMap
         {
             foreach (var tile in this)
             {
-                if (tile != null) tile.Draw(MGame.SpriteBatch, MGame.Main.Camera);
+                if (tile != null) tile.Draw(gameTime);
 
             }
 #if DEBUG

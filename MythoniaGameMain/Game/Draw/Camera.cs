@@ -58,10 +58,10 @@ namespace Mythonia.Game.Draw
             tranPos.Y *= -1;
             tranPos += MGame.GraphicsDevice.Size() / 2;
             Angle direction = transform.Direction - Direction;
-            if(transform.FlipX && transform.FlipY) direction += 180f;
+            if(transform.Scale.X < 0 && transform.Scale.Y < 0) direction += 180f;
             direction *= -1;
 
-            return (tranPos, direction, transform.Scale * zScale, transform.FlipX, transform.FlipY);
+            return (tranPos, direction, transform.Scale * zScale);
 
         }
 
