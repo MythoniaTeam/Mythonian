@@ -50,11 +50,13 @@ namespace Mythonia.Game.Sprites
 
         public Transform Transform
         {
-            get => new(_position, _direction, _scale, _flipX, _flipY);
-            set => (_position, _direction, _scale, _flipX, _flipY) = value.ToTuple;
+            get => new(_position, _direction, _scale);
+            set => (_position, _direction, _scale) = value.ToTuple;
         }
 
         #endregion
+
+
 
         #region Constructors
 
@@ -64,6 +66,25 @@ namespace Mythonia.Game.Sprites
             Name = name;
             Texture = texture;
             _position = position ?? (0, 0, 0);
+        }
+
+        #endregion
+
+
+
+        #region Methods
+
+        public override void Draw(GameTime gameTime)
+        {
+            base.Draw(gameTime);
+            DrawTexture(MGame.SpriteBatch, MGame.Main.Camera);
+        }
+
+        public virtual void DrawTexture(SpriteBatch spriteBatch = null, Camera camera = null)
+        {
+            spriteBatch ??= MGame.SpriteBatch;
+            camera ??= MGame.Main.Camera;
+            Texture.Draw(spriteBatch, camera, TextureSourceRange, Transform);
         }
 
         #endregion

@@ -39,27 +39,6 @@ namespace Mythonia.Game.Draw
         }
 
 
-        public void Draw(SpriteBatch spriteBatch, Camera camera, ITexture texture, Rectangle sourceRange, Transform transform)
-        {
-            var (screenPos, screenDirection, scale, _, _) = camera.Transform(transform).ToTuple;
-            
-            spriteBatch.Draw(texture.RawTexture, 
-                (MVec2)screenPos, 
-                sourceRange, 
-                Color.White, 
-                screenDirection, 
-                texture.Size / 2, 
-                scale, 
-                transform.SpriteEffects,
-                0);
-        }
-        public void Draw(Sprite sprite, SpriteBatch spriteBatch = null, Camera camera = null)
-        {
-            spriteBatch ??= MGame.SpriteBatch;
-            camera ??= MGame.Main.Camera;
-            Draw(spriteBatch, camera, sprite.Texture, sprite.TextureSourceRange, sprite.Transform);
-        }
-
     }
 
 }

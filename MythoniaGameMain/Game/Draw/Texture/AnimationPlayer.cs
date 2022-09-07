@@ -32,6 +32,8 @@ namespace Mythonia.Game.Draw.Texture
 
 
 
+        #region Constructors
+
         public AnimationPlayer(MGame game, MTexture texture, AnimationMeta animation)
         {
             Texture = texture;
@@ -39,6 +41,11 @@ namespace Mythonia.Game.Draw.Texture
             CurrentAnimation = animation;
         }
 
+        #endregion
+
+
+
+        #region Methods
 
         /// <summary>
         /// 每帧增加计时器
@@ -57,6 +64,23 @@ namespace Mythonia.Game.Draw.Texture
                 _timeCount %= CurrentAnimation.Duration;
             }
         }
+
+        public void Draw(SpriteBatch spriteBatch, Camera camera, Rectangle sourceRange, Transform transform)
+        {
+            var (screenPos, screenDirection, scale) = camera.Transform(transform).ToTuple;
+
+            spriteBatch.Draw(RawTexture,
+                (MVec2)screenPos,
+                sourceRange,
+                Color.White,
+                screenDirection,
+                Size / 2,
+                scale,
+                transform.SpriteEffects,
+                0);
+        }
+
+        #endregion
 
 
 

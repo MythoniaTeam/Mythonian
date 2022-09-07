@@ -442,7 +442,7 @@ namespace Mythonia.Game.Sprites
 
 
         
-        public override void Draw(GameTime gameTime)
+        /*public override void Draw(GameTime gameTime)
         {
             //var (scrPos, _, _) = MGame.Main.Camera.Transform(Position);
             //MGame.SpriteBatch.Draw(Texture, scrPos, null, Color.White, 0, Texture.Size / 2, 1, SpriteEffects.None, 0);
@@ -455,7 +455,7 @@ namespace Mythonia.Game.Sprites
             //    //HitboxFoot.DrawHitbox(new(50,0, 0, 100));
             //}
 #endif
-        }
+        }*/
 
         #endregion
 

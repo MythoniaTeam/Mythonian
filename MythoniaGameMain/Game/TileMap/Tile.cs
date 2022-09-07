@@ -365,12 +365,12 @@ namespace Mythonia.Game.TileMap
 
         #region Methods - Game Component
 
-        public void Draw(SpriteBatch spriteBatch, Camera cam)//, GameTime gameTime)
+        /*public void Draw(SpriteBatch spriteBatch, Camera cam)//, GameTime gameTime)
         {
             //var (scrPos, _, scale) = cam.Transform(new(Position));
             //spriteBatch.Draw(Texture, scrPos, Texture.SubTextures[TextureBorderType.ToString()], Color.White, 0, Texture.Size / 2, scale, SpriteEffects.None, 0);
             DrawManager.Ins.Draw(this);
-        }
+        }*/
 
         #endregion
 
