@@ -5,7 +5,7 @@
     public static class HitUtility
     {
 
-        #region Method - CheckColl
+        #region Method - CheckHit
 
         public static bool IsHit(IHitbox h1, IHitbox h2)
         {
