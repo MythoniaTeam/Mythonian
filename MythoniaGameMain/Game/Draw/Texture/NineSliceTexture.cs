@@ -39,7 +39,7 @@ namespace Mythonia.Game.Draw.Texture
                      * 但我脑子稍微有点不够用了
                      */
 
-                    MVec2 position = new MVec2(x, y) * (SliceSize + new MVec2(1, 1)) / 2;
+                    MVec2 position = new MVec2(x, y) * (SliceSize + new MVec2(1, 1)) * transform.Scale / 2;
 
                     Rectangle sliceRange = SliceRanges[x + 1, 1 - y];
 
