@@ -1,60 +1,58 @@
 ﻿
 
+
 namespace Mythonia.Game.Draw.Texture
 {
     public class NineSliceTexture : MTexture
     {
-        private MVec2 SliceSize;
 
-        private Rectangle[,] SliceRanges = new Rectangle[3,3];
+        public MVec2 Border;
 
-
-        public NineSliceTexture(MGame game, ContentManager content, string name) : base(game, content, name)
+        public NineSliceTexture(MGame game, ContentManager content, string name, MVec2 border) : base(game, content, name)
         {
-            NamedList<Frame> slices = new NamedList<Frame>();
-            SliceSize = new MVec2(RawTexture.Width, RawTexture.Height) / 3;
-            
-            for (int y = 0; y < 3; y++)
+            Border = border;
+
+            for (int y = -1; y <= 1; y++)
             {
-                for (int x = 0; x < 3; x++)
+                for (int x = -1; x <= 1; x++)
                 {
-                    SliceRanges[y, x] = new(new MVec2(x, y) * SliceSize, SliceSize);
-                }
-            }
+
+                    MVec2 position = Size + (Size + border) * (x, y) / 2;
+                    MVec2 size = (
+                        x == 0 ? Size.X - 2 * border.X : border.X,
+                        y == 0 ? Size.Y - 2 * border.Y : border.Y
+                    );
+
+                    Frames.Add(new($"{x},{y}", new(position - size / 2, size)));
+
+                };
+            };
         }
 
 
 
-        public override void Draw(SpriteBatch spriteBatch, Camera camera, Rectangle sourceRange, Transform transform)
+        public override void Draw(SpriteBatch spriteBatch, Camera camera, Rectangle _, Transform transform)
         {
             for (int y = -1; y <= 1; y++)
             {
                 for (int x = -1; x <= 1; x++)
                 {
 
-                    /*
-                     * ⚠⚠⚠ 注意 ⚠⚠⚠
-                     * 下面这个position是“每个切块相对于图像中心的偏移量”
-                     * 我知道我写的这个很可能是错的
-                     * 但我脑子稍微有点不够用了
-                     */
+                    Rectangle range = Frames[$"{x},{y}"].Range;
 
-                    MVec2 position = new MVec2(x, y) * (SliceSize + new MVec2(1, 1)) * transform.Scale / 2;
-
-                    Rectangle sliceRange = SliceRanges[x + 1, 1 - y];
-
-                    Transform sliceTransform = new(
-                        transform.Position + position,
-                        transform.Direction,
-                        new(
-                            x == 0 ? transform.Scale.X : 1,
-                            y == 0 ? transform.Scale.Y : 1
-                        )
+                    MVec3 position = transform.Position + (Size - Border) * (x, y) / 2;
+                    MVec2 scale = (
+                        x == 0 ? transform.Scale.X : 1,
+                        y == 0 ? transform.Scale.Y : 1
                     );
 
-                    base.Draw(spriteBatch, camera, sliceRange, sliceTransform);
-                }
-            }
+                    transform = new(position, transform.Direction, scale);
+
+                    base.Draw(spriteBatch, camera, range, transform);
+
+                };
+            };
         }
+
     }
 }
