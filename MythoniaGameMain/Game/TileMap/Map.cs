@@ -66,8 +66,8 @@ namespace Mythonia.Game.TileMap
         public int Width => _tiles.GetLength(0);
         public int Height => _tiles.GetLength(1);
 
-        public Rectangle TileSize { get; init; }
-        public MVec2 TileSizeVec => TileSize.Size;
+        public Rectangle TileRectangle { get; init; }
+        public MVec2 TileSizeVec => TileRectangle.Size;
 
         public List<RectangleHitbox> MapHitboxes { get; private set; } = new();
 
@@ -103,7 +103,7 @@ namespace Mythonia.Game.TileMap
 
         private Map(MGame game, Rectangle tilesize, Tile[,] tiles) : base(game)
         {
-            TileSize = tilesize;
+            TileRectangle = tilesize;
             _tiles = tiles;
         }
 
@@ -185,7 +185,10 @@ namespace Mythonia.Game.TileMap
                         }
                     }
 
-                    var hitbox = new RectangleHitbox(MGame, () => ((indexTo + indexFr) / 2) * TileSizeVec, (indexTo - indexFr + (1, 1)) * TileSizeVec);
+                    var hitbox = new RectangleHitbox(MGame, 
+                        () => ((indexTo + indexFr) / 2) * TileSizeVec, 
+                        (indexTo - indexFr + (1, 1)) * TileSizeVec, 
+                        IHitbox.Types.Rigid);
                     MapHitboxes.Add(hitbox);
 
                     //将碰撞体绑定在图格上

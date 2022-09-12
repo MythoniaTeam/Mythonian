@@ -9,21 +9,27 @@ namespace Mythonia.Game
     /// </summary>
     public class MGameMain
     {
-        public Map TileMap { get; set; }
-
-        public Camera Camera { get; set; }
-        public Player Player { get; set; }
-
+        public MGame MGame { get; init; }
 
         public Input Input { get; init; }
         public TextManager Text { get; init; }
 
-        public MGame MGame { get; init; }
+
+        public Map Map { get; set; }
+
+        public Camera Camera { get; set; }
+        public Player Player { get; set; }
+
+        public EntitiesManager Entities { get; init; } = new();
 
 
         public MGameMain(MGame game, Rectangle tileSize)
         {
             MGame = game;
+
+            var font = MGame.Content.Load<SpriteFont>("Fonts/Default");
+            Text = new TextManager(MGame, font);
+
 
             /*
              * 可通过Input[KeyName keyName]来访问这些按键的状态
@@ -40,7 +46,7 @@ namespace Mythonia.Game
                 Keys.K
             });
 
-            TileMap = Map.StringToMap(MGame, tileSize, new string[]
+            Map = Map.StringToMap(MGame, tileSize, new string[]
             {
 
 
@@ -74,18 +80,17 @@ namespace Mythonia.Game
                 @"#####################################################################",
             });
 
-            var font = MGame.Content.Load<SpriteFont>("Fonts/Default");
-            Text = new TextManager(MGame, font);
-
+            var pressurePlate = new PressurePlateBase(MGame, Map, Map.TileSizeVec * (4, 1));
+            MGame.Components.Add(pressurePlate);
 
             Camera = new(MGame, 0, 0);
 
-            Player = new Player(MGame, TileMap);
+            Player = new Player(MGame, Map);
 
 
             MGame.Components.Add(Camera);
             MGame.Components.Add(Input);
-            MGame.Components.Add(TileMap);
+            MGame.Components.Add(Map);
             MGame.Components.Add(Player);
             MGame.Components.Add(Text);
 

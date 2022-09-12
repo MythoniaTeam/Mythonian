@@ -126,13 +126,16 @@ namespace Mythonia.Game.Draw.Texture
         public virtual void Draw(SpriteBatch spriteBatch, Camera camera, Rectangle sourceRange, Transform transform)
         {
             var (screenPos, screenDirection, scale) = camera.Transform(transform).ToTuple;
-
+            if(Name != "Tile")
+            {
+                int a = 1;
+            }
             spriteBatch.Draw(RawTexture,
                 (MVec2)screenPos,
                 sourceRange,
                 Color.White,
-                screenDirection,
-                Size / 2,
+                screenDirection.Radian,
+                sourceRange.Size.ToVector2() / 2,
                 scale,
                 transform.SpriteEffects,
                 0);

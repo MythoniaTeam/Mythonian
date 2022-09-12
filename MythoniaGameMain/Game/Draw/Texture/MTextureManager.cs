@@ -24,6 +24,12 @@ namespace Mythonia.Game.Draw.Texture
             Add(new TileTexture(MGame, Content, "Tile", TileSize));
             Add(new MTexture(MGame, Content, "TestPlayer"));
             Add(new MTexture(MGame, Content, "BouncingBomb").SecTexture(4).AddAnimation());
+            Add(new MTexture(MGame, Content, "PressurePlate", new (string, Rectangle)[]
+            {
+                ("Plate", new(0, 0, 32, 6)),
+                ("BaseUnActivate", new(0, 6, 32, 10)),
+                ("BaseActivate", new(0, 16, 32, 10))
+            }));
 
             TestCNFont = Content.Load<SpriteFont>("Fonts/File");
         }

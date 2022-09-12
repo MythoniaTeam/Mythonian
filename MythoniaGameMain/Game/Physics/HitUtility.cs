@@ -76,11 +76,11 @@
         /// <item><term>不碰撞</term> <description><see langword="null"/></description></item>
         /// </list>
         /// </returns>
-        public static IList<RectangleHitbox> GetHitTile(Map map, RectangleHitbox hitbox)
+        public static List<RectangleHitbox> GetHitTiles(MGameMain gameMain, RectangleHitbox hitbox)
         {
-            MVec2 blTilePos = hitbox.BottomLeft / map.TileSizeVec;
+            MVec2 blTilePos = hitbox.BottomLeft / gameMain.Map.TileSizeVec;
             blTilePos.Floor();
-            MVec2 trTilePos = hitbox.TopRight / map.TileSizeVec;
+            MVec2 trTilePos = hitbox.TopRight / gameMain.Map.TileSizeVec;
             trTilePos.Ceiling();
 
             List<RectangleHitbox> checkedHitboxes = new();
@@ -89,26 +89,45 @@
             int trY = (int)trTilePos.Y;
             for (int x = (int)blTilePos.X; x <= trX; x++)
             {
-                for(int y = (int)blTilePos.Y; y <= trY; y++)
+                for (int y = (int)blTilePos.Y; y <= trY; y++)
                 {
-                    if (map[x, y] != null)
+                    if (gameMain.Map[x, y] != null)
                     {
-                        var tileHitbox = map[x, y].Hitbox;
+                        var tileHitbox = gameMain.Map[x, y].Hitbox;
                         if (!checkedHitboxes.Contains(tileHitbox))
                         {
                             checkedHitboxes.Add(tileHitbox);
                             if (IsHit(hitbox, tileHitbox)) hitHitboxes.Add(tileHitbox);
                         }
                     }
-                    
-                    
                 }
             }
-            //List<RectangleHitbox> hitHitboxes = new();
-            /*foreach (var tileHitbox in map.MapHitboxes)
+            return hitHitboxes.IsEmpty() ? null : hitHitboxes;
+
+        }
+        /// <summary>
+        /// 给定一个矩形碰撞体, 与 <see cref="Map"/>的碰撞体 和 <see cref="MGameMain.Entities"/>的碰撞体 检测碰撞
+        /// <para>会先调用 <see cref="GetHitTiles(MGameMain, RectangleHitbox)"/></para>
+        /// </summary>
+        /// <param name="hitbox">给定的碰撞体</param>
+        /// <returns>
+        /// <list type="table">
+        /// <item><term>碰撞</term> <description>与之碰撞的 <see cref="IList{RectHitbox}"/> 碰撞体</description></item>
+        /// <item><term>不碰撞</term> <description><see langword="null"/></description></item>
+        /// </list>
+        /// </returns>
+        public static List<RectangleHitbox> GetHitRigidObjects(MGameMain gameMain, RectangleHitbox hitbox)
+        { 
+            List<RectangleHitbox> hitHitboxes = GetHitTiles(gameMain, hitbox) ?? new();
+
+            foreach (var entity in gameMain.Entities)
             {
-                if (IsHit(hitbox, tileHitbox)) hitHitboxes.Add(tileHitbox);
-            }*/
+                if(entity.Hitbox is RectangleHitbox entityHitbox && entity.Hitbox.Type is IHitbox.Types.Rigid)
+                {
+                    if (IsHit(hitbox, entityHitbox)) hitHitboxes.Add(entityHitbox);
+                }
+            }
+
             return hitHitboxes.IsEmpty() ? null : hitHitboxes;
         }
 
