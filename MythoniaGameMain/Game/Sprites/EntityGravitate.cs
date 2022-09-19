@@ -20,13 +20,13 @@ namespace Mythonia.Game.Sprites
         #region Prop - Physics
 
 
-        public RectangleHitbox Hitbox { get; protected set; }
+        public new RectangleHitbox Hitbox { get; protected set; }
 
         public bool OnGround { get; protected set; }
         public IList<RectangleHitbox> OnHitbox { get; protected set; }
 
         public bool JumpStatus { get; protected set; } = false;
-        public sbyte WalkStatus { get; protected set; } = 0;
+        public int WalkStatus { get; protected set; } = 0;
 
         /// <summary>
         /// 横向移动的加速度
@@ -69,7 +69,6 @@ namespace Mythonia.Game.Sprites
 
         public EntityGravitate(string name, MGame game, Map map, ITexture texture, MVec2? position = null) : base(name, game, map, texture, position)
         {
-
         }
 
 
@@ -133,7 +132,7 @@ namespace Mythonia.Game.Sprites
         /// </summary>
         /// <param name="gameTime"></param>
         /// <param name="walk"></param>
-        protected virtual void Walk(GameTime gameTime, sbyte walk)
+        protected virtual void Walk(GameTime gameTime, int walk)
         {
             if (!_velocity.X.IsInLimit(MaxWalkSpd) || walk == 0)
             {
@@ -193,7 +192,7 @@ namespace Mythonia.Game.Sprites
                 }
                 _velocity.Y = 0;
             }
-            var (hitX, hitboxesX) = SpdDecompoMove(gameTime, _velocity * (1, 0), velRecord);
+            var (hitX, _) = SpdDecompoMove(gameTime, _velocity * (1, 0), velRecord);
             if (hitX)
             {
                 _velocity.X = 0;

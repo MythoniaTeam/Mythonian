@@ -4,15 +4,15 @@
 
 namespace Mythonia.Game.Physics
 {
+    public delegate void HitEvent(Sprite s);
     public class RectangleHitboxEvented : RectangleHitbox
     {
-        public delegate void HitEvent(Sprite s);
 
         public event HitEvent WhenBeStepped;
 
         public void SteppedBy(Sprite s)
         {
-            WhenBeStepped(s);
+            if(WhenBeStepped is not null) WhenBeStepped(s);
         }
 
 

@@ -11,8 +11,6 @@ namespace Mythonia.Game.Sprites
 
         #region Prop
 
-        public Input Input => MGame.Main.Input;
-
 
 
 
@@ -102,7 +100,18 @@ namespace Mythonia.Game.Sprites
                 Position = (0, 40, 0);
                 Velocity = (0, 0);
             }
+            if (Input[KeyName.Debug] == 1)
+            {
+                MGame.Components.Add(new BouncingBomb(MGame, Map, (MVec2)Position + (0, 200)));
+                MGame.Components.Add(_aimingLine = new AimingLineVertical(MGame, Map));
+            }
+            if (Input[KeyName.Down] == 1)
+            {
+                _aimingLine.Activate();
+            }
+
         }
+        AimingLineVertical _aimingLine;
 #endif
 
                
