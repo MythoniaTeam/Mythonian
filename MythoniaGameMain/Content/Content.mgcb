@@ -30,6 +30,18 @@
 #begin Fonts/sourcehanserifsc.ttf
 /copy:Fonts/sourcehanserifsc.ttf
 
+#begin Images/AimingLineVertical.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/AimingLineVertical.png
+
 #begin Images/BouncingBomb.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -41,6 +53,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Images/BouncingBomb.png
+
+#begin Images/PressurePlate.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/PressurePlate.png
 
 #begin Images/PX.png
 /importer:TextureImporter

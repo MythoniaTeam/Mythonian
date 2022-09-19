@@ -16,29 +16,58 @@ namespace Mythonia.Game.Draw.Texture
 
         public MVec2 Size => Texture.Size;
 
-        private float _timeCount = 0;
+        private float _timeCount;
+        private float TimeCount
+        {
+            get => _timeCount;
+            set
+            {
+                _timeCount = value;
+                if (_timeCount >= CurrentAnimation.Duration)
+                {
+                    //如果播放到最后一帧
+                    if (CurrentFrameNo + (int)(_timeCount / CurrentAnimation.Duration) >= CurrentAnimation.Length && !RepeatPlaying)
+                    {
+                        OnFinishPlaying(CurrentAnimation);
+                        CurrentFrameNo = CurrentAnimation.Length - 1;
+                        PlaySpeed = 0;
+                    }
+                    else
+                    {
+                        //增加帧数
+                        CurrentFrameNo += (int)(_timeCount / CurrentAnimation.Duration);
+                        _timeCount %= CurrentAnimation.Duration;
+                    }
+                }
+            }
+        }
         private int CurrentFrameNo
         {
             get => _currentFrameNo;
             set
             {
-                _currentFrameNo = value;
-                if (_currentFrameNo >= CurrentAnimation.Length) _currentFrameNo = 0;
+                _currentFrameNo = value % CurrentAnimation.Length;
             }
         }
         private int _currentFrameNo = 0;
 
         public float PlaySpeed { get; set; } = 1;
 
+        public bool RepeatPlaying { get; set; } = true;
+
+        public delegate void FinishPlaying(AnimationMeta current);
+        public event FinishPlaying OnFinishPlaying;
+
 
 
         #region Constructors
 
-        public AnimationPlayer(MGame game, MTexture texture, AnimationMeta animation)
+        public AnimationPlayer(MGame game, MTexture texture, AnimationMeta animation, bool repeatPlaying = true)
         {
             Texture = texture;
             game.DrawManager.AddAnimationPlayer(this);
             CurrentAnimation = animation;
+            RepeatPlaying = repeatPlaying;
         }
 
         #endregion
@@ -46,6 +75,16 @@ namespace Mythonia.Game.Draw.Texture
 
 
         #region Methods
+
+        public void PlayAnimation(string name, bool repeatPlaying = true)
+        {
+            CurrentAnimation = Texture.Animations[name];
+            CurrentFrameNo = 0;
+            TimeCount = 0;
+            PlaySpeed = 1;
+            RepeatPlaying = repeatPlaying;
+        }
+
 
         /// <summary>
         /// 每帧增加计时器
@@ -57,25 +96,21 @@ namespace Mythonia.Game.Draw.Texture
         /// <param name="gameTime"></param>
         public void Update(GameTime gameTime)
         {
-            _timeCount += gameTime.CFDuration();
-            if(_timeCount >= CurrentAnimation.Duration)
-            {
-                CurrentFrameNo += (int)(_timeCount / CurrentAnimation.Duration);
-                _timeCount %= CurrentAnimation.Duration;
-            }
+            TimeCount += gameTime.CFDuration() * PlaySpeed;
+            
         }
 
         public void Draw(SpriteBatch spriteBatch, Camera camera, Rectangle sourceRange, Transform transform)
         {
             var (screenPos, screenDirection, scale) = camera.Transform(transform).ToTuple;
-
+            
             spriteBatch.Draw(RawTexture,
                 (MVec2)screenPos,
                 sourceRange,
                 Color.White,
                 screenDirection,
                 Size / 2,
-                scale,
+                scale.Abs,
                 transform.SpriteEffects,
                 0);
         }

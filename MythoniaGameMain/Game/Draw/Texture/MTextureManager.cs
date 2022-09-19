@@ -24,8 +24,19 @@ namespace Mythonia.Game.Draw.Texture
             Add(new TileTexture(MGame, Content, "Tile", TileSize));
             Add(new MTexture(MGame, Content, "TestPlayer"));
             Add(new MTexture(MGame, Content, "BouncingBomb").SecTexture(4).AddAnimation());
+            Add(new MTexture(MGame, Content, "PressurePlate", new (string, Rectangle)[]
+            {
+                ("Plate", new(0, 0, 32, 6)),
+                ("BaseUnActivate", new(0, 6, 32, 10)),
+                ("BaseActivate", new(0, 16, 32, 10))
+            }));
+            Add(new MTexture(MGame, Content, "AimingLineVertical").
+                SecTexture(17).
+                AddAnimation(duration: 6.5f, frameEnd: 8).
+                AddAnimation("Activate", 4.8f, frameStart: 9));
 
             TestCNFont = Content.Load<SpriteFont>("Fonts/File");
+
         }
 
         #endregion
@@ -54,9 +65,9 @@ namespace Mythonia.Game.Draw.Texture
         /// 实例化<see cref="MGame"/> 后, 在 <see cref="MGame.LoadContent"/> 中实例化
         /// </summary>
         /// <param name="game"></param>
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
         public MTextureManager(MGame game)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
         {
             Ins ??= this;
             MGame = game;

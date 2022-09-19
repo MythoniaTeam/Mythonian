@@ -8,9 +8,9 @@ namespace Mythonia.Sturctures
     {
         public static Vector2 Rotation(this Vector2 v, Angle rotation)
         {
-            float sin = MathF.Sin(rotation);
-            float cos = MathF.Cos(rotation);
-            return new(v.X * cos + v.Y * sin, v.Y * cos - v.X * cos);
+            float sin = MathF.Sin(rotation.Radian);
+            float cos = MathF.Cos(rotation.Radian);
+            return new(v.X * cos - v.Y * sin, v.Y * cos + v.X * sin);
 
         }
 

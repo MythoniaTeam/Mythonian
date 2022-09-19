@@ -20,34 +20,10 @@ namespace Mythonia.Game.Sprites
         protected MVec3 _position;
         protected Angle _direction;
         protected MVec2 _scale = (1, 1);
-        protected bool _flipX;
-        protected bool _flipY;
         public MVec3 Position { get => _position; set => _position = value; }
         public Angle Direction { get => _direction; set => _direction = value; }
         public MVec2 Scale { get => _scale; set => _scale = value; }
-        public enum Flip
-        {
-            N, X, Y, XY
-        }
-        public Flip FlipStatus
-        {
-            get => (_flipX, _flipY) switch
-            {
-                (false, false) => Flip.N,
-                (true, false) => Flip.X,
-                (false, true) => Flip.Y,
-                (true, true) => Flip.XY,
-            };
-            set => (_flipX, _flipY) = value switch
-            {
-                Flip.N => (false, false),
-                Flip.X => (true, false),
-                Flip.Y => (false, true),
-                Flip.XY => (true, true),
-                _ => throw new Exception($"enum Sprite.Flip doesn't contains value \"{value}\"")
-            };
-        }
-
+        
         public Transform Transform
         {
             get => new(_position, _direction, _scale);

@@ -90,13 +90,13 @@ namespace Mythonia.Game.Draw.Texture
             int[] frames = new int[frameEnd2 - frameStart + 1];
             for (int i = 0; i < frames.Length; i++)
             {
-                frames[i] = i;
+                frames[i] = i + frameStart;
             }
             AddAnimation(name, duration, frames);
             return this;
         }
 
-        public MTexture AddAnimations(IList<(string name, float duration, int[] frames)> animations)
+        public MTexture AddAnimations((string name, float duration, int[] frames)[] animations)
         {
             foreach(var (name, duration, frames) in animations)
             {
@@ -109,7 +109,6 @@ namespace Mythonia.Game.Draw.Texture
 
         public MTexture AddAnimations(IList<(string name, float duration, int frameStart, int frameEnd)> animations)
         {
-            List<(string name, float duration, int[] frames)> animations2 = new();
             foreach(var (name, duration, frameStart, frameEnd) in animations)
             {
                 AddAnimation(name, duration, frameStart, frameEnd);
@@ -126,14 +125,19 @@ namespace Mythonia.Game.Draw.Texture
         public virtual void Draw(SpriteBatch spriteBatch, Camera camera, Rectangle sourceRange, Transform transform)
         {
             var (screenPos, screenDirection, scale) = camera.Transform(transform).ToTuple;
-
+#if DEBUG
+            if (Name == "BouncingBomb")
+            {
+                //int a = 1;
+            }
+#endif
             spriteBatch.Draw(RawTexture,
                 (MVec2)screenPos,
                 sourceRange,
                 Color.White,
-                screenDirection,
-                Size / 2,
-                scale,
+                screenDirection.Radian,
+                sourceRange.Size.ToVector2() / 2,
+                scale.Abs,
                 transform.SpriteEffects,
                 0);
         }

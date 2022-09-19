@@ -9,23 +9,29 @@ namespace Mythonia.Game
     /// </summary>
     public class MGameMain
     {
-        public Map TileMap { get; set; }
+        public MGame MGame { get; init; }
+
+        public Input Input { get; init; }
+        public TextManager Text { get; init; }
+        public Pen.Pen Pen { get; set; }
+
+
+        public Map Map { get; set; }
+
 
         public Camera Camera { get; set; }
         public Player Player { get; set; }
 
+        public EntitiesManager Entities { get; init; } = new();
 
-        public Input Input { get; init; }
-        public TextManager Text { get; init; }
-
-        public MGame MGame { get; init; }
-
-
-        public Pen.Pen Pen { get; set; }
 
         public MGameMain(MGame game, Rectangle tileSize)
         {
             MGame = game;
+
+            var font = MGame.Content.Load<SpriteFont>("Fonts/Default");
+            Text = new TextManager(MGame, font);
+
 
             /*
              * 可通过Input[KeyName keyName]来访问这些按键的状态
@@ -33,65 +39,57 @@ namespace Mythonia.Game
              * 返回一个int表示按键状态
              * 也可以使用这些返回布尔值的方法：KeyDown, KeyPress, KeyUp, KeyRelease
              */
-            Input = new(MGame, new Keys[] {
-                Keys.A,
-                Keys.D,
-                Keys.W,
-                Keys.S,
-                Keys.L,
-                Keys.K
-            });
+            Input = new(MGame);
 
             Player = new(MGame);
 
             Pen = new(MGame);
 
-            TileMap = Map.StringToMap(MGame, tileSize, new string[]
+            Map = Map.StringToMap(MGame, tileSize, new string[]
             {
 
 
-                @"                                                                 ##  ",
-                @"                                                                  |  ",
-                @"                                                                  |  ",
-                @"                            @@  ## # #| @@@|                  ####|  ",
-                @"                           @@@@#######||@@@|                      |  ",
-                @"                          ##@@|@@@@@@@##@@@|                      |  ",
-                @"                         ####|||@@ @ @# |||#                      |  ",
-                @"                         ####|||# # @@##                #   ####  |  ",
-                @"                          ##@@|##### @#                           |  ",
-                @"                           |@@@ ### @@##                          |  ",
-                @"                          |||@@#####@@##                          |  ",
-                @"                           |@@@ # #  @#                   ####    |  ",
-                @"                            @@                                    |  ",
-                @"                                                                  |  ",
-                @"                                                                  |  ",
-                @"                                                        ####         ",
-                @"                                                                     ",
-                @"                                                                     ",
-                @"            #####                                                    ",
-                @"           ######                ####                ####            ",
-                @"          #######            #####                                   ",
-                @"         ########               ##                                   ",
-                @"        #########               ##                                   ",
-                @"   ######################################         #####              ",
-                @"                                                                     ",
-                @"                                                                     ",
-                @"                                                                     ",
-                @"#####################################################################",
+                @"                                                                 ##                                                                                                     #",
+                @"                                                                  |                                                                                                     #",
+                @"                                                                  |                                                                                                     #",
+                @"                            @@  ## # #| @@@|                  ####|                                                                                                     #",
+                @"                           @@@@#######||@@@|                      |                                                                                                     #",
+                @"                          ##@@|@@@@@@@##@@@|                      |                                                                                                     #",
+                @"                         ####|||@@ @ @# |||#                      |                                                                                                     #",
+                @"                         ####|||# # @@##                #   ####  |                                                                                                     #",
+                @"                          ##@@|##### @#                           |                                                                                                     #",
+                @"                           |@@@ ### @@##                          |                                                                                                     #",
+                @"                          |||@@#####@@##                          |                                                                                                     #",
+                @"                           |@@@ # #  @#                   ####    |                                                                                                     #",
+                @"                            @@                                    |                                                                                                     #",
+                @"                                                                  |                                                                                                     #",
+                @"                                                                  |                                                                                                     #",
+                @"                                                        ####                                                                                                            #",
+                @"                                                                                                                                                                        #",
+                @"                                                                                                                                                                        #",
+                @"            #####                                                                                                                                                       #",
+                @"           ######                ####                ####                                                                                                               #",
+                @"          #######            #####                                                                                                                                      #",
+                @"         ########               ##                                                                                                                                      #",
+                @"        #########               ##                                                                                                                                      #",
+                @"   ######################################         #####                                                                                                                 #",
+                @"                                                                                                                                                                        #",
+                @"                                                                                                                                                                        #",
+                @"                                                                                                                                                                        #",
+                @"#########################################################################################################################################################################",
             });
 
-            var font = MGame.Content.Load<SpriteFont>("Fonts/Default");
-            Text = new TextManager(MGame, font);
-
+            var pressurePlate = new PressurePlate(MGame, Map, Map.TileSizeVec * (4, 1));
+            MGame.Components.Add(pressurePlate);
 
             Camera = new(MGame, 0, 0);
 
-            Player = new Player(MGame, TileMap);
+            Player = new Player(MGame, Map);
 
 
             MGame.Components.Add(Camera);
             MGame.Components.Add(Input);
-            MGame.Components.Add(TileMap);
+            MGame.Components.Add(Map);
             MGame.Components.Add(Player);
             MGame.Components.Add(Text);
             MGame.Components.Add(Pen);

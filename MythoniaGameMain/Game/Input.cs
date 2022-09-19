@@ -9,7 +9,8 @@ namespace Mythonia.Game
         Up,
         Down,
         Jump,
-        Attack
+        Attack,
+        Debug,
     }
 
     public class Input : GameComponent
@@ -17,7 +18,15 @@ namespace Mythonia.Game
 
         #region Props
 
-        public KeyCodeList KeyCode;
+        public KeyCodeList KeyCode { get; init; } = new(new Keys[] {
+                Keys.Left,
+                Keys.Right,
+                Keys.Up,
+                Keys.Down,
+                Keys.X,
+                Keys.Z,
+                Keys.Space
+            });
 
         private readonly int[] _keyStates;
 
@@ -29,9 +38,9 @@ namespace Mythonia.Game
 
         #region Constructor
 
-        public Input(MGame game, Keys[] keyCode) : base(game)
+        public Input(MGame game/*, Keys[] keyCode*/) : base(game)
         {
-            KeyCode = new(keyCode);
+            //KeyCode = new(keyCode);
             _keyStates = new int[KeyCode.Length];
         }
 

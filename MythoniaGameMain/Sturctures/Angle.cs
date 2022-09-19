@@ -22,7 +22,11 @@ namespace Mythonia.Sturctures
                 } 
             }
         }
-        public float Radium => _degree * MathF.PI / 180;
+        public float Radian
+        {
+            get => _degree / 180 * MathF.PI;
+            set => _degree = value * 180 / MathF.PI;
+        }
 
 
         #region Prop - Static
@@ -42,13 +46,20 @@ namespace Mythonia.Sturctures
         }
 
 
+        public override string ToString()
+        {
+            return $"{Degree} Deg";
+        }
+
         #region Operators
 
         public static Angle operator +(Angle a, Angle b) => new(a.Degree + b.Degree);   
         public static Angle operator +(Angle a, float b) => new(a.Degree + b);
+        public static Angle operator +(Angle a, int b) => new(a.Degree + b);
         public static Angle operator +(float a, Angle b) => new(a + b.Degree);
         public static Angle operator -(Angle a, Angle b) => new(a.Degree - b.Degree);
         public static Angle operator -(Angle a, float b) => new(a.Degree - b);
+        public static Angle operator -(Angle a, int b) => new(a.Degree - b);
         public static Angle operator -(float a, Angle b) => new(a - b.Degree);
         public static Angle operator *(Angle a, float b) => new(a.Degree * b);
         public static Angle operator *(float a, Angle b) => new(a * b.Degree);

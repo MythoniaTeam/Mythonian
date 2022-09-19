@@ -11,12 +11,14 @@ namespace Mythonia.Game.Physics
         private readonly Func<MVec2> _getPosMethod;
 
         public float Radius { get; set; }
+        public IHitbox.Types Type { get; private set; }
 
 
-        public CircleHitbox(Func<MVec2> getposmethod, float radius)
+        public CircleHitbox(Func<MVec2> getposmethod, float radius, IHitbox.Types type)
         {
             _getPosMethod = getposmethod;
             Radius = radius;
+            Type = type;
         }
     }
 }

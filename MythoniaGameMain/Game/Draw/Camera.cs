@@ -39,6 +39,9 @@ namespace Mythonia.Game.Draw
             Focus = focus ?? 100;
             Pos = new MVec3(x ?? 0, y ?? 0, z ?? 2 * Focus);
             Target = Pos;
+
+            TextManager.Ins.WriteLine(() => $"Scroll Wheel Value: {_scrollWheelValueRecord}");
+            TextManager.Ins.WriteLine(() => $"Camera Direction: {Direction}");
         }
 
         #endregion
@@ -53,7 +56,7 @@ namespace Mythonia.Game.Draw
             float zScale = Scale / ((Pos.Z - transform.Position.Z - Focus) / Focus);
             MVec2 tranPos = (MVec2)(transform.Position - Pos) * zScale;
 
-            tranPos.Rotation(-Direction);
+            tranPos = tranPos.Rotation(-Direction);
 
             tranPos.Y *= -1;
             tranPos += MGame.GraphicsDevice.Size() / 2;
@@ -65,10 +68,26 @@ namespace Mythonia.Game.Draw
 
         }
 
+        private int _scrollWheelValueRecord = 0;
+        private const float ZoomRate = 1.1f;
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
             Pos = MGame.Main.Player.Position.SetNew(z: Pos.Z);//方便测试先改成这样
+
+            var mouse = Mouse.GetState();
+            if(mouse.ScrollWheelValue != _scrollWheelValueRecord)
+            {
+                if (mouse.ScrollWheelValue > _scrollWheelValueRecord)
+                    Scale *= ZoomRate;
+                else
+                    Scale /= ZoomRate;
+                _scrollWheelValueRecord = mouse.ScrollWheelValue;
+            }
+            var key = Keyboard.GetState();
+            if (key.IsKeyDown(Keys.PageDown)) Direction += 4;
+            if (key.IsKeyDown(Keys.PageUp)) Direction -= 4;
+            //if ()
             /*
             if (FollowPlayer)
             {

@@ -18,12 +18,15 @@ namespace Mythonia.Game.Physics
         public MVec2 BottomLeft => Position - Size / 2;
         public MVec2 TopRight => Position + Size / 2;
 
+        public IHitbox.Types Type { get; private set; }
 
-        public RectangleHitbox(MGame game, Func<MVec2> getposmethod, MVec2 size)
+
+        public RectangleHitbox(MGame game, Func<MVec2> getposmethod, MVec2 size, IHitbox.Types type)
         {
             MGame = game;
             _getPosMethod = getposmethod;
             Size = size;
+            Type = type;
         }
 
 
@@ -40,7 +43,7 @@ namespace Mythonia.Game.Physics
         {
             var (scrPos, scrDir, scale) =
                 MGame.Main.Camera.Transform(new(Position)).ToTuple;
-            MGame.SpriteBatch.Draw(MTextureManager.Ins.PX, (MVec2)scrPos, null, color, scrDir, new MVec2(1, 1) / 2, scale * Size, SpriteEffects.None, 1);
+            MGame.SpriteBatch.Draw(MTextureManager.Ins.PX, (MVec2)scrPos, null, color, scrDir.Radian, new MVec2(1, 1) / 2, scale * Size, SpriteEffects.None, 1);
         }
     }
 }
