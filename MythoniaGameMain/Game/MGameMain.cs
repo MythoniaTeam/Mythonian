@@ -21,6 +21,8 @@ namespace Mythonia.Game
         public MGame MGame { get; init; }
 
 
+        public Pen.Pen Pen { get; set; }
+
         public MGameMain(MGame game, Rectangle tileSize)
         {
             MGame = game;
@@ -39,6 +41,10 @@ namespace Mythonia.Game
                 Keys.L,
                 Keys.K
             });
+
+            Player = new(MGame);
+
+            Pen = new(MGame);
 
             TileMap = Map.StringToMap(MGame, tileSize, new string[]
             {
@@ -88,12 +94,7 @@ namespace Mythonia.Game
             MGame.Components.Add(TileMap);
             MGame.Components.Add(Player);
             MGame.Components.Add(Text);
-
-
-
-
-
-
+            MGame.Components.Add(Pen);
         }
     }
 }

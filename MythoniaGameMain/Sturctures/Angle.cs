@@ -22,6 +22,7 @@ namespace Mythonia.Sturctures
                 } 
             }
         }
+        public float Radium => _degree * MathF.PI / 180;
 
 
         #region Prop - Static
