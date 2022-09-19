@@ -41,8 +41,6 @@ namespace Mythonia.Game
              */
             Input = new(MGame);
 
-            Player = new(MGame);
-
             Pen = new(MGame);
 
             Map = Map.StringToMap(MGame, tileSize, new string[]

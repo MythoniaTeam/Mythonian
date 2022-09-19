@@ -18,7 +18,7 @@
         public Pen(MGame game) : base(game)
         {
             MGame = game;
-            Texture = game.PX;
+            Texture = MTextureManager.Ins.PX;
         }
 
         #endregion
@@ -33,10 +33,10 @@
             foreach (Line line in LineList)
             {
                 var (scrPos, direction, scale) =
-                    MGame.Main.Camera.Transform(line.MidPoint, line.Direction, new(line.Length, line.Width));
+                    MGame.Main.Camera.Transform(new(line.MidPoint, line.Direction, new(line.Length, line.Width))).ToTuple;
 
                 MGame.SpriteBatch.Draw(
-                    Texture, scrPos, null, line.Color, direction.Radium, new(0.5f), scale, SpriteEffects.None, 0);
+                    Texture, (MVec2)scrPos, null, line.Color, direction.Radian, new(0.5f), scale, SpriteEffects.None, 0);
             }
 
         }
