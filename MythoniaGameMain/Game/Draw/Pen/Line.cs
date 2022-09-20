@@ -1,4 +1,4 @@
-﻿namespace Mythonia.Game.Pen
+﻿namespace Mythonia.Game.Draw.Pen
 {
     public class Line
     {

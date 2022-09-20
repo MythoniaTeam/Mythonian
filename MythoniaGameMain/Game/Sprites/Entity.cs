@@ -17,9 +17,9 @@ namespace Mythonia.Game.Sprites
 
         #region 
 
-        public Entity(string name, MGame game, Map map, ITexture texture, MVec2? position = null) : base(name, game, map, texture, position)
+        public Entity(string name, MGame game, Map map, ITexture texture, MVec2? position = null, bool addToList = true) : base(name, game, map, texture, position)
         {
-            EntitiesManager.Ins.Add(this);
+            if(addToList) EntitiesManager.Ins.Add(this);
         }
         #endregion
     }

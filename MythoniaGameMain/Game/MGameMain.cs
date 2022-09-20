@@ -13,7 +13,7 @@ namespace Mythonia.Game
 
         public Input Input { get; init; }
         public TextManager Text { get; init; }
-        public Pen.Pen Pen { get; set; }
+        public Pen Pen { get; set; }
 
 
         public Map Map { get; set; }

@@ -68,7 +68,7 @@ namespace Mythonia.Game.Sprites
 #if DEBUG
         private bool _f11Down = false;
         private bool _f10Down = false;
-        private void DebugUpdate()
+        private void DebugUpdate(GameTime gameTime)
         {
             KeyboardState key = Keyboard.GetState();
             if (key.IsKeyDown(Keys.F10))
@@ -83,6 +83,7 @@ namespace Mythonia.Game.Sprites
             {
                 _f10Down = false;
             }
+
             if (key.IsKeyDown(Keys.F11))
             {
                 if (!_f11Down)
@@ -95,31 +96,46 @@ namespace Mythonia.Game.Sprites
             {
                 _f11Down = false;
             }
+
+
             if (key.IsKeyDown(Keys.R))
             {
                 Position = (0, 40, 0);
                 Velocity = (0, 0);
             }
-            if (Input[KeyName.Debug] == 1)
+
+            if (Input[KeyName.Debug] > 0)
             {
-                MGame.Components.Add(new BouncingBomb(MGame, Map, (MVec2)Position + (0, 200)));
-                MGame.Components.Add(_aimingLine = new AimingLineVertical(MGame, Map));
+                _xVel = Input[KeyName.Debug] / 10f;
+                var prototype = new BouncingBombPrototype(MGame, Map, (MVec2)Position + (0, 200), _xVel * MathF.Sign(Transform.Scale.X));
+                int collCount = 0;
+                for(int i = 0; i < 120; i++)
+                {
+                    if (prototype.PrototypeUpdate(gameTime)) collCount++;
+                    if (collCount == 4 && i < 100) i = 100;
+                }
+            }
+            else if (Input[KeyName.Debug] == -1)
+            {
+                MGame.Components.Add(new BouncingBomb(MGame, Map, (MVec2)Position + (0, 200), _xVel * MathF.Sign(Transform.Scale.X)));
+                //MGame.Components.Add(_aimingLine = new AimingLineVertical(MGame, Map));
             }
             if (Input[KeyName.Down] == 1)
             {
-                _aimingLine.Activate();
+                //_aimingLine.Activate();
             }
 
         }
-        AimingLineVertical _aimingLine;
+        float _xVel;
+        //AimingLineVertical _aimingLine;
 #endif
 
-               
 
         public override void Update(GameTime gameTime)
         {
+            var posRecord = (MVec2)Position;
 #if DEBUG
-            DebugUpdate();
+            DebugUpdate(gameTime);
 #endif
             JumpStatus = Input.KeyDown(KeyName.Jump);
 
@@ -130,8 +146,13 @@ namespace Mythonia.Game.Sprites
                 (true, false) => -1, //按下左键
                 (false, true) => 1, //按下右键
             };
+            if (WalkStatus == -1 && MathF.Sign(_scale.X) == 1 ||
+                WalkStatus == 1 && MathF.Sign(_scale.X) == -1) _scale.X *= -1;
+            
             
             base.Update(gameTime);
+
+            Pen.Ins.DrawLine((MVec2)Position, posRecord, 100);
         }
 
 

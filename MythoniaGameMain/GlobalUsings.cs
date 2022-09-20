@@ -21,7 +21,9 @@ global using Mythonia.Game.Sprites.Effects;
 global using Mythonia.Game.Physics;
 global using Mythonia.Game.TileMap;
 global using Mythonia.Game.UserInterface;
+
 global using Mythonia.Game.Draw;
+global using Mythonia.Game.Draw.Pen;
 global using Mythonia.Game.Draw.Texture;
 
 global using Mythonia.Debug;
