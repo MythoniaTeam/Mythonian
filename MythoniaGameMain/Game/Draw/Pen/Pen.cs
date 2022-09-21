@@ -40,12 +40,12 @@
         {
             for(int i = 0; i < LineList.Count; i++)
             {
-                LineList[i] = (LineList[i].Line, LineList[i].Life - gameTime.CFDuration());
-                if(LineList[i].Life < 0)
+                if(LineList[i].Life <= 0)
                 {
                     LineList.RemoveAt(i);
                     i--;
                 }
+                else LineList[i] = (LineList[i].Line, LineList[i].Life - gameTime.CFDuration());
             }
         }
 

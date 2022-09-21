@@ -107,7 +107,7 @@ namespace Mythonia.Game.Sprites
             if (Input[KeyName.Debug] > 0)
             {
                 _xVel = Input[KeyName.Debug] / 10f;
-                var prototype = new BouncingBombPrototype(MGame, Map, (MVec2)Position + (0, 200), _xVel * MathF.Sign(Transform.Scale.X));
+                var prototype = new BouncingBomb(MGame, Map, (MVec2)Position + (0, 200), _xVel * MathF.Sign(Transform.Scale.X), true);
                 int collCount = 0;
                 for(int i = 0; i < 120; i++)
                 {

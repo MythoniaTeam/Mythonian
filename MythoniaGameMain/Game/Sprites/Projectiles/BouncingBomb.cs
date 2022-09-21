@@ -4,10 +4,14 @@
 
 namespace Mythonia.Game.Sprites.Projectiles
 {
-    public class BouncingBombPrototype : EntityGravitate
+    
+
+        
+
+    public class BouncingBomb : EntityGravitate
     {
-        public BouncingBombPrototype(MGame game, Map map, MVec2 pos, float xVel)
-            : base("BouncingBomb-Prototype", game, map, MTextureManager.Ins["BouncingBomb"], pos, false)
+        public BouncingBomb(MGame game, Map map, MVec2 pos, float xVel, bool prototype = false) 
+            : base("BouncingBomb", game,map, MTextureManager.Ins["BouncingBomb"].PlayAnimation(), pos, !prototype)
         {
             MaxFallingSpd = 18f;
             MaxWalkSpd = new(15);
@@ -18,10 +22,11 @@ namespace Mythonia.Game.Sprites.Projectiles
         }
 
         public bool Coll;
+
         protected override bool MoveHitAndGroundCheck(GameTime gameTime)
         {
+            OnGround = false;
             Coll = false;
-            OnGround = false;
 
             //分解 X Y 速度移动
             MVec2 velRecord = _velocity;
@@ -43,6 +48,7 @@ namespace Mythonia.Game.Sprites.Projectiles
                 _velocity.Y *= -0.87f;
                 _velocity.X *= 0.95f;
                 Coll = true;
+
             }
             var (hitX, _) = SpdDecompoMove(gameTime, _velocity * (1, 0), velRecord);
             if (hitX)
@@ -55,75 +61,6 @@ namespace Mythonia.Game.Sprites.Projectiles
         }
 
 
-        public bool PrototypeUpdate(GameTime gameTime)
-        {
-            var posRecord = (MVec2)Position;
-            base.Update(gameTime);
-            Pen.Ins.DrawLine((MVec2)Position, posRecord, 2);
-            return Coll;
-
-        }
-
-        public override void Draw(GameTime gameTime)
-        {
-        }
-    }
-
-    public class BouncingBomb : EntityGravitate
-    {
-        public BouncingBomb(MGame game, Map map, MVec2 pos, float xVel) 
-            : base("BouncingBomb", game,map, MTextureManager.Ins["BouncingBomb"].PlayAnimation(), pos, true)
-        {
-            MaxFallingSpd = 18f;
-            MaxWalkSpd = new(15);
-            WalkAcc = 0;
-            _velocity.X = MaxWalkSpd.Limit(xVel);//MaxWalkSpd;
-            _velocity.Y = -10;
-            Hitbox = new(MGame, () => (MVec2)Position, Texture.Size, IHitbox.Types.Entity);
-        }
-
-        protected override bool MoveHitAndGroundCheck(GameTime gameTime)
-        {
-            OnGround = false;
-
-            //分解 X Y 速度移动
-            MVec2 velRecord = _velocity;
-            var (hitY, hitboxesY) = SpdDecompoMove(gameTime, _velocity * (0, 1), velRecord);
-            if (hitY)
-            {
-                //如果向下移动且碰撞，表示在地面上
-                if (velRecord.Y < 0)
-                {
-                    OnGround = true;
-                    foreach (var hitboxY in hitboxesY)
-                    {
-                        if (hitboxY is RectangleHitboxEvented hitboxEvented)
-                        {
-                            hitboxEvented.SteppedBy(this);
-                        }
-                    }
-                }
-                _velocity.Y *= -0.87f;
-                _velocity.X *= 0.95f;
-            }
-            var (hitX, _) = SpdDecompoMove(gameTime, _velocity * (1, 0), velRecord);
-            if (hitX)
-            {
-                _velocity.X *= -0.95f;
-                _scale.X *= -1;
-            }
-            return OnGround;
-        }
-
-
-        public bool PrototypeUpdate(GameTime gameTime)
-        {
-            var posRecord = (MVec2)Position;
-            base.Update(gameTime);
-            Pen.Ins.DrawLine((MVec2)Position, posRecord, 2);
-            return OnGround;
-
-        }
 
         //float MaxSpeed => new MVec2(MaxWalkSpd, MaxFallingSpd).LengthSquared();
         public override void Update(GameTime gameTime)
@@ -137,5 +74,15 @@ namespace Mythonia.Game.Sprites.Projectiles
             Pen.Ins.DrawLine((MVec2)Position, posRecord, 100);
 
         }
+
+        public bool PrototypeUpdate(GameTime gameTime)
+        {
+            var posRecord = (MVec2)Position;
+            base.Update(gameTime);
+            Pen.Ins.DrawLine((MVec2)Position, posRecord, 1);
+            return Coll;
+
+        }
+
     }
 }
