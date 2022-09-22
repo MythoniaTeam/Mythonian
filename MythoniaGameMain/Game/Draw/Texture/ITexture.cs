@@ -15,6 +15,11 @@ namespace Mythonia.Game.Draw.Texture
 
         Rectangle GetSourceRange();
 
-        void Draw(SpriteBatch spriteBatch, Camera camera, Rectangle sourceRange, Transform transform);
+        void Draw(SpriteBatch spriteBatch, Camera camera, Transform transform)
+        {
+            Draw(spriteBatch, camera.Transform(transform));
+        }
+
+        void Draw(SpriteBatch spriteBatch, Transform transform);
     }
 }

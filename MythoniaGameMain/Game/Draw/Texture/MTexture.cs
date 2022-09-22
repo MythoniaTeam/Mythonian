@@ -4,7 +4,7 @@
 
 namespace Mythonia.Game.Draw.Texture
 {
-    public class MTexture: ITexture, INamed
+    public class MTexture: ITexture, INamed, ICloneable
     {
         public string Name { get; init; }
 
@@ -27,7 +27,21 @@ namespace Mythonia.Game.Draw.Texture
 
         public NamedList<AnimationMeta> Animations { get; init; } = new();
 
+        public Frame CurrentFrame { get; set; }
 
+
+        #region Constructors
+
+        protected MTexture(MGame game, Texture2D rawTexture, string name, MVec2 size, NamedList<Frame> frames, NamedList<AnimationMeta> animations)
+        {
+            Name = name;
+            RawTexture = rawTexture;
+            MGame = game;
+            Size = size;
+            Frames = frames;
+            Animations = animations;
+            CurrentFrame = Frames[0];
+        }
 
         public MTexture(MGame game, ContentManager content, string name, ICollection<(string Name, Rectangle Range)>? subtextures = null)
         {
@@ -42,9 +56,18 @@ namespace Mythonia.Game.Draw.Texture
             {
                 Frames.Add(new(sub.Name, sub.Range));
             }
+            else
+            {
+                Frames.Add(new("Default", new(new(0, 0), Size)));
+            }
+            CurrentFrame = Frames[0];
         }
 
+        #endregion
 
+
+
+        #region Method - Initialization
 
         /// <summary>
         /// 按照行、列数分割帧图, 保存到 <see cref="Frames"/> 中
@@ -74,10 +97,10 @@ namespace Mythonia.Game.Draw.Texture
                 }
             }
 
+            PlayFrame(0);
             return this;
-        }
+        }        
 
-        
 
         public MTexture AddAnimation(string name, float duration, int[] frames)
         {
@@ -95,7 +118,6 @@ namespace Mythonia.Game.Draw.Texture
             AddAnimation(name, duration, frames);
             return this;
         }
-
         public MTexture AddAnimations((string name, float duration, int[] frames)[] animations)
         {
             foreach(var (name, duration, frames) in animations)
@@ -105,8 +127,6 @@ namespace Mythonia.Game.Draw.Texture
 
             return this;
         }
-        
-
         public MTexture AddAnimations(IList<(string name, float duration, int frameStart, int frameEnd)> animations)
         {
             foreach(var (name, duration, frameStart, frameEnd) in animations)
@@ -117,20 +137,40 @@ namespace Mythonia.Game.Draw.Texture
             return this;
         }
 
+        #endregion
+
+
+
         public AnimationPlayer PlayAnimation(string name = "Default")
         {
             return new(MGame, this, Animations[name]);
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch, Camera camera, Rectangle sourceRange, Transform transform)
+        public MTexture PlayFrame(string name)
         {
-            var (screenPos, screenDirection, scale) = camera.Transform(transform).ToTuple;
-#if DEBUG
-            if (Name == "BouncingBomb")
-            {
-                //int a = 1;
-            }
-#endif
+            CurrentFrame = Frames[name];
+            return this;
+        }
+        public MTexture PlayFrame(int index)
+        {
+            CurrentFrame = Frames[index];
+            return this;
+        }
+
+
+
+
+        public virtual void Draw(SpriteBatch spriteBatch, Camera camera, Transform transform)
+        {
+            Draw(spriteBatch, camera.Transform(transform));
+        }
+
+        public virtual void Draw(SpriteBatch spriteBatch, Transform transform)
+        {
+            var (screenPos, screenDirection, scale) = transform.ToTuple;
+
+            var sourceRange = GetSourceRange();
+
             spriteBatch.Draw(RawTexture,
                 (MVec2)screenPos,
                 sourceRange,
@@ -144,14 +184,22 @@ namespace Mythonia.Game.Draw.Texture
 
 
 
+
+
         #region Implement - ITexture
 
-        public Rectangle GetSourceRange()
+        public virtual Rectangle GetSourceRange()
         {
-            return new(new(0, 0), Size);
+            return CurrentFrame.Range;
         }
 
         #endregion
+
+        public MTexture Clone()
+        {
+            return new MTexture(MGame, RawTexture, Name, Size, Frames, Animations);
+        }
+        object ICloneable.Clone() => Clone();
 
 
 

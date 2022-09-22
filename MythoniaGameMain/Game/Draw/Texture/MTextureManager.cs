@@ -22,13 +22,16 @@ namespace Mythonia.Game.Draw.Texture
             PX = Content.Load<Texture2D>("Images/PX");
 
             Add(new TileTexture(MGame, Content, "Tile", TileSize));
+
+            Add(new NineSliceTexture(MGame, Content, "TestNineSlice", (24, 16)));
+
             Add(new MTexture(MGame, Content, "TestPlayer"));
             Add(new MTexture(MGame, Content, "BouncingBomb").SecTexture(4).AddAnimation());
             Add(new MTexture(MGame, Content, "PressurePlate", new (string, Rectangle)[]
             {
                 ("Plate", new(0, 0, 32, 6)),
-                ("BaseUnActivate", new(0, 6, 32, 10)),
-                ("BaseActivate", new(0, 16, 32, 10))
+                ("BaseInactive", new(0, 6, 32, 10)),
+                ("BaseActive", new(0, 16, 32, 10))
             }));
             Add(new MTexture(MGame, Content, "AimingLineVertical").
                 SecTexture(17).
@@ -58,7 +61,8 @@ namespace Mythonia.Game.Draw.Texture
         /// <exception cref="Exception"></exception>
         public MTexture this[string name]
         {
-            get => _textures.Find(texture => texture.Name == name) ?? throw new Exception($"Texture \"{name}\" is not found");
+            get => (_textures.Find(texture => texture.GetType() == typeof(MTexture) && texture.Name == name) 
+                ?? throw new Exception($"Texture \"{name}\" is not found")).Clone();
         }
 
         /// <summary>
@@ -82,7 +86,10 @@ namespace Mythonia.Game.Draw.Texture
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <returns></returns>
-        public T Get<T>(string name) where T : MTexture => (T)this[name];
+        public T Get<T>(string name) where T : MTexture
+        {
+            return (T)((ICloneable)_textures.Find(texture => texture is T && texture.Name == name)).Clone();
+        }
 
     }
 }

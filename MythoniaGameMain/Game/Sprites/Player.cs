@@ -4,7 +4,7 @@
 
 namespace Mythonia.Game.Sprites
 {
-    public class Player : EntityGravitate
+    public class Player : EntityGravitate, IHealth
     {
 
 
@@ -12,6 +12,7 @@ namespace Mythonia.Game.Sprites
         #region Prop
 
 
+        public HealthInfo Health { get; init; } = new(100, 0);
 
 
         #region Prop - Physics
@@ -43,7 +44,7 @@ namespace Mythonia.Game.Sprites
         #region Constructor
 
         public Player(MGame game, Map map) 
-            : base("Player", game, map, game.TextureManager["TestPlayer"]/*game.TextureManager["BouncingBomb"].PlayAnimation()*/, (0,40))
+            : base("Player", EntityType.Player, game, map, game.TextureManager["TestPlayer"]/*game.TextureManager["BouncingBomb"].PlayAnimation()*/, new((0,40, 0)))
         {
             JumpsCountMax = 4;
             MaxWalkSpd = new(4);
@@ -52,11 +53,20 @@ namespace Mythonia.Game.Sprites
             JumpKeyPressAcc = 0.37f;
 
             //Scale = (2, 2);
-            Hitbox = new(MGame, () => (MVec2)Position, Texture.Size, IHitbox.Types.Entity);
+            RectHitbox = new(MGame, () => (MVec2)Position, Texture.Size, IHitbox.Types.Entity);
 
+#if DEBUG
             TextManager.Ins.WriteLine(() => $"Player Vel.X: {MathF.Round(_velocity.X, 2)}");
             TextManager.Ins.WriteLine(() => $"Player Vel.Y: {MathF.Round(_velocity.Y, 2)}");
             TextManager.Ins.WriteLine(() => $"Jumps Count: {JumpsCount}");
+            TextManager.Ins.WriteLine(() => $"Health: {Health.HealthPoint}");
+
+            Health.HealthPoint = 80;
+            Health.Defence = 8;
+
+            //game.Components.Add(new Panel(MGame, Map, new((400, 280, 0), scale: (300, 200))));
+#endif
+
         }
 
         #endregion
@@ -174,10 +184,10 @@ namespace Mythonia.Game.Sprites
                     else if (JumpKeyReleased)
                     {
                         var posTemp = _position;
-                        _position += _velocity.SetNew(y: -1.2f * Hitbox.Size.Y);
+                        _position += _velocity.SetNew(y: -1.2f * RectHitbox.Size.Y);
 
                         //如果再次按下按键且前下方有碰撞体，开始加速下坠
-                        if (!ApplyAutoJumpAcc && HitUtility.GetHitTiles(MGame.Main, Hitbox) != null)
+                        if (!ApplyAutoJumpAcc && HitUtility.GetHitTiles(MGame.Main, RectHitbox) != null)
                         {
                             ApplyAutoJumpAcc = true;
                             TextManager.Ins.WriteLine(() => "ApplyAutoJumpAcc", 100);
@@ -257,7 +267,7 @@ namespace Mythonia.Game.Sprites
                     //移动
                     _position = posTemp2.ChangeNew(x: i);
                     //如果不发生碰撞，返回，结束后面碰撞检测的部分
-                    if (!hitboxes.IsHit(Hitbox))
+                    if (!hitboxes.IsHit(RectHitbox))
                         return (false, true);
 
                     i += MathF.Sign(i);
@@ -286,7 +296,7 @@ namespace Mythonia.Game.Sprites
 #if DEBUG
             if (MDebug.DrawEntitiesHitbox)
             {
-                Hitbox.DrawHitbox(new(150, 255, 160, 150));
+                RectHitbox.DrawHitbox(new(150, 255, 160, 150));
                 //HitboxFoot.DrawHitbox(new(50,0, 0, 100));
             }
 #endif

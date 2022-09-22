@@ -5,6 +5,34 @@
     public static class HitUtility
     {
 
+        public static bool IsHitableWith(this Entity e1, Entity e2)
+        {
+            if (e1.Type == EntityType.HostileProjectile && e2.Type == EntityType.Player) return true;
+            return false;
+        }
+
+        public static void GetHitEntities(this Entity e, EntitiesManager entities = null, Action<Entity, Entity> hitAction = null)
+        {
+            entities ??= EntitiesManager.Ins;
+            hitAction ??= EntitiesHitAction;
+            foreach(var e2 in entities)
+            {
+                if (e.IsHitableWith(e2) && IsHit(e.Hitbox, e2.Hitbox))
+                {
+                    hitAction(e, e2);
+                }
+            }
+        }
+
+        public static void EntitiesHitAction(Entity e1, Entity e2)
+        {
+            if (e1.Type == EntityType.HostileProjectile && 
+                e2.Type == EntityType.Player) 
+                ((IHealth)e2).Health.DealDamage(((IDamage)e1).Damage);
+
+        }
+
+
         #region Method - CheckHit
 
         public static bool IsHit(IHitbox h1, IHitbox h2)

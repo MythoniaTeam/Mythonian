@@ -10,26 +10,27 @@ namespace Mythonia.Game.Sprites.Sceneries
     {
         public bool Activate { get; private set; } = false;
 
-        public override Rectangle TextureSourceRange => _textureSourceRange;
-        public Rectangle _textureSourceRange;
 
         private sbyte _aniCount = -1;
 
         public TopPlate Plate { get; init; }
 
-        public RectangleHitboxEvented HitboxEvented => (RectangleHitboxEvented)Hitbox;
+        public override IHitbox Hitbox => HitboxRect;
+        public RectangleHitbox HitboxRect { get; set; }
 
 
         public event HitEvent OnActivate;
 
+        public MTexture MTexture => (MTexture)Texture;
+
         public PressurePlate(MGame game, Map map, MVec2 position) 
-            : base("PressurePlate", game, map, game.TextureManager["PressurePlate"], position.ChangeNew(y: -3))
+            : base("PressurePlate", EntityType.Scenery, game, map, game.TextureManager["PressurePlate"], new(position.ChangeNew(y: -3)))
         {
             Plate = new(game, map, position);
             game.Components.Add(Plate);
             position.Change(y: -3);
-            _textureSourceRange = ((MTexture)Texture).Frames["BaseUnActivate"].Range;
-            Hitbox = new RectangleHitbox(MGame, () => position, (32, 10), IHitbox.Types.Rigid);
+            MTexture.PlayFrame("BaseInactive");
+            HitboxRect = new RectangleHitbox(MGame, () => position, (32, 10), IHitbox.Types.Rigid);
             Plate.HitboxEvented.WhenBeStepped += PressurePlate_HitboxEvented_WhenBeStepped;
         }
 
@@ -52,7 +53,7 @@ namespace Mythonia.Game.Sprites.Sceneries
                 _aniCount++;
                 if(_aniCount == ChangeLightTime)
                 {
-                    _textureSourceRange = ((MTexture)Texture).Frames["BaseActivate"].Range;
+                    MTexture.PlayFrame("BaseActive");
                     _aniCount = -1;
                 }
             }
@@ -67,14 +68,15 @@ namespace Mythonia.Game.Sprites.Sceneries
             private sbyte _aniCount = -1;
             private readonly float _originPosY;
 
-            public override Rectangle TextureSourceRange => ((MTexture)Texture).Frames["Plate"].Range;
 
-            public RectangleHitboxEvented HitboxEvented => (RectangleHitboxEvented)Hitbox;
+            public override IHitbox Hitbox => HitboxEvented;
+            public RectangleHitboxEvented HitboxEvented { get; set; }
+
             public TopPlate(MGame game, Map map, MVec2 position)
-                : base("PressurePlate", game, map, game.TextureManager["PressurePlate"], position.Change(y: 5))
+                : base("PressurePlate", EntityType.Scenery, game, map, game.TextureManager["PressurePlate"].PlayFrame("Plate"), new(position.Change(y: 5)))
             {
                 _originPosY = Position.Y;
-                Hitbox = new RectangleHitboxEvented(MGame, () => (MVec2)Position, (24, 6), IHitbox.Types.Rigid);
+                HitboxEvented = new RectangleHitboxEvented(MGame, () => (MVec2)Position, (24, 6), IHitbox.Types.Rigid);
                 HitboxEvented.WhenBeStepped += HitboxEvented_WhenBeStepped;
 
                 TextManager.Ins.WriteLine(() => $"Pressure Plate Activate: {Activate}");

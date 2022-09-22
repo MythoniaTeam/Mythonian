@@ -4,7 +4,7 @@
 
 namespace Mythonia.Game.Draw.Texture
 {
-    internal class TileTexture : MTexture
+    public class TileTexture : MTexture, ITexture, ICloneable
     {
         private static Tile.TextureBorderExtend[] BorderTypeList = new[]
         {
@@ -62,6 +62,16 @@ namespace Mythonia.Game.Draw.Texture
             Tile.TextureBorderExtend.No_AgNoBR
 
         };
+
+        public Tile BoundedTile { get; set; }
+
+        private TileTexture(MGame game, Texture2D rawTexture, string name, MVec2 size, NamedList<Frame> frames, NamedList<AnimationMeta> animations)
+            : base(game, rawTexture, name, size, frames, animations)
+        {
+            
+        }
+
+
         public TileTexture(MGame game, ContentManager content, string name, Rectangle gridSize) : base(game, content, name)
         {
             SecAsTile(gridSize);
@@ -81,5 +91,21 @@ namespace Mythonia.Game.Draw.Texture
             Size = gridSize.Size;
             return this;
         }
+
+        public override Rectangle GetSourceRange()
+        {
+            PlayFrame(BoundedTile.TextureBorderType.ToString());
+            return base.GetSourceRange();
+        }
+
+        Rectangle ITexture.GetSourceRange() => GetSourceRange();
+
+
+        public new TileTexture Clone()
+        {
+            return new(MGame, RawTexture, Name, Size, Frames, Animations);
+        }
+
+        object ICloneable.Clone() => Clone();
     }
 }

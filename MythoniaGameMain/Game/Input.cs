@@ -42,6 +42,7 @@ namespace Mythonia.Game
         {
             //KeyCode = new(keyCode);
             _keyStates = new int[KeyCode.Length];
+            for (int i = 0; i < _keyStates.Length; i++) _keyStates[i] = int.MinValue;
         }
 
         #endregion
@@ -62,13 +63,13 @@ namespace Mythonia.Game
                 {
                     if (_keyStates[i] < 0) _keyStates[i] = 0;
 
-                    _keyStates[i] += 1;//(int)gameTime.CFDuration();
+                    if (_keyStates[i] < int.MaxValue) _keyStates[i] += 1;//(int)gameTime.CFDuration();
                 }
                 else
                 {
                     if (_keyStates[i] > 0) _keyStates[i] = 0;
 
-                    _keyStates[i] -= 1;//(int)gameTime.CFDuration();
+                    if (_keyStates[i] > int.MinValue) _keyStates[i] -= 1;//(int)gameTime.CFDuration();
                 };
             };
         }

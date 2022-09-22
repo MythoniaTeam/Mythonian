@@ -7,7 +7,7 @@ namespace Mythonia.Game.Sprites
     /// <summary>
     /// 受重力影响的实体
     /// </summary>
-    public class EntityGravitate : Entity
+    public abstract class EntityGravitate : Entity
     {
 
         #region Prop
@@ -20,7 +20,8 @@ namespace Mythonia.Game.Sprites
         #region Prop - Physics
 
 
-        public new RectangleHitbox Hitbox { get; protected set; }
+        public RectangleHitbox RectHitbox { get; protected set; }
+        public override IHitbox Hitbox => RectHitbox;
 
         public bool OnGround { get; protected set; }
         public IList<RectangleHitbox> OnHitbox { get; protected set; }
@@ -67,8 +68,8 @@ namespace Mythonia.Game.Sprites
 
 
 
-        public EntityGravitate(string name, MGame game, Map map, ITexture texture, MVec2? position = null, bool addToList = true) 
-            : base(name, game, map, texture, position, addToList)
+        public EntityGravitate(string name, EntityType type, MGame game, Map map, ITexture texture, Transform transform = default, bool addToList = true) 
+            : base(name, type, game, map, texture, transform, addToList)
         {
         }
 
@@ -222,7 +223,7 @@ namespace Mythonia.Game.Sprites
             _position += vel;
 
             //检查碰撞
-            var hitboxes = HitUtility.GetHitRigidObjects(MGame.Main, Hitbox);
+            var hitboxes = HitUtility.GetHitRigidObjects(MGame.Main, RectHitbox);
             RectangleHitbox[] hitboxes2 = null;
             if (hitboxes is not null)
             {
@@ -284,7 +285,7 @@ namespace Mythonia.Game.Sprites
                     {
 
                         _position = posTemp.ChangeNew(y: 1 + 8 * i);
-                        if (HitUtility.GetHitRigidObjects(MGame.Main, Hitbox) is null)
+                        if (HitUtility.GetHitRigidObjects(MGame.Main, RectHitbox) is null)
                         {
                             //如果向上移动一格后不会碰撞，那么将施加一个朝 Y 正方向的力
                             _velocity.Y += AutoStairClimbSpd * (i+1) / 3;
@@ -319,7 +320,7 @@ namespace Mythonia.Game.Sprites
             foreach (var hitbox in hitboxes)
             {
                 //如果仍然碰撞
-                if (HitUtility.IsHit(Hitbox, hitbox))
+                if (HitUtility.IsHit(RectHitbox, hitbox))
                 {
                     //位置重置
                     _position = posTemp;
@@ -351,13 +352,13 @@ namespace Mythonia.Game.Sprites
             if (MathF.Abs(vel.LengthSquared()) < 0.01f)
             {
                 //如果 | vel | < 0.1, 退后 整个vel, 结束递归
-                if (HitUtility.IsHit(hitbox, Hitbox))
+                if (HitUtility.IsHit(hitbox, RectHitbox))
                     _position -= vel;
                 return;
             }
 
             vel /= 2.0f;
-            if (HitUtility.IsHit(hitbox, Hitbox))
+            if (HitUtility.IsHit(hitbox, RectHitbox))
             {
                 //如果碰到了, 退后 一半vel
                 _position -= vel;

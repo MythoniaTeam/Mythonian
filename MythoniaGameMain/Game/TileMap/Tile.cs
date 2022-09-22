@@ -10,7 +10,7 @@ namespace Mythonia.Game.TileMap
 
         public int Id { get; init; }
 
-        public override Rectangle TextureSourceRange => ((MTexture)Texture).Frames[TextureBorderType.ToString()].Range;
+        //public override Rectangle TextureSourceRange => ((MTexture)Texture).Frames[TextureBorderType.ToString()].Range;
 
         public TextureBorderExtend TextureBorderType { get; private set; } = TextureBorderExtend.All;
 
@@ -26,6 +26,8 @@ namespace Mythonia.Game.TileMap
         }
 
         public RectangleHitbox? Hitbox { get; set; }
+
+        public TileTexture TileTexture => (TileTexture)Texture;
 
 
 
@@ -65,14 +67,17 @@ namespace Mythonia.Game.TileMap
 
         #region Constructor
 
-        private Tile(MGame game, int id, Map map, MVec2 index) : base($"Tile-{index}", game, map, game.TextureManager["Tile"], index * map.TileSizeVec)
+        private Tile(MGame game, int id, Map map, MVec2 index) 
+            : base($"Tile-{index}", game, map, game.TextureManager.Get<TileTexture>("Tile"), new(index * map.TileSizeVec))
         {
+            TileTexture.BoundedTile = this;
+
             Id = id;
             _mapIndex = index;//map?.FindIndex(this);
 
             if (id != 0) HasColl = true; else HasColl = false;
 
-            Texture = game.TextureManager["Tile"];
+            //Texture = game.TextureManager["Tile"];
             //Texture = game.TextureManager[$"Tile_{Id}"];
         }
 

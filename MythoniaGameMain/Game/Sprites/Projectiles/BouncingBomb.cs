@@ -8,17 +8,22 @@ namespace Mythonia.Game.Sprites.Projectiles
 
         
 
-    public class BouncingBomb : EntityGravitate
+    public class BouncingBomb : EntityGravitate, IDamage
     {
-        public BouncingBomb(MGame game, Map map, MVec2 pos, float xVel, bool prototype = false) 
-            : base("BouncingBomb", game,map, MTextureManager.Ins["BouncingBomb"].PlayAnimation(), pos, !prototype)
+        public DamageInfo Damage { get; set; }
+
+
+        public BouncingBomb(MGame game, Map map, MVec2 position, float xVel, bool prototype = false) 
+            : base("BouncingBomb", EntityType.HostileProjectile, game, map, MTextureManager.Ins["BouncingBomb"].PlayAnimation(), new(position), !prototype)
         {
             MaxFallingSpd = 18f;
             MaxWalkSpd = new(15);
             WalkAcc = 0;
             _velocity.X = MaxWalkSpd.Limit(xVel);//MaxWalkSpd;
             _velocity.Y = -10;
-            Hitbox = new(MGame, () => (MVec2)Position, Texture.Size, IHitbox.Types.Entity);
+            RectHitbox = new(MGame, () => (MVec2)Position, Texture.Size, IHitbox.Types.Entity);
+
+            Damage = new(10);
         }
 
         public bool Coll;
@@ -71,8 +76,11 @@ namespace Mythonia.Game.Sprites.Projectiles
             //WalkStatus = MathF.Sign(Velocity.X);
             base.Update(gameTime);
 
+
             Pen.Ins.DrawLine((MVec2)Position, posRecord, 100);
 
+            Damage.KnokBack = _velocity;
+            this.GetHitEntities();
         }
 
         public bool PrototypeUpdate(GameTime gameTime)

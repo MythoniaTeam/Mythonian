@@ -6,7 +6,8 @@ namespace Mythonia.Game.Sprites.Effects
 {
     public class AimingLineVertical : Sprite
     {
-        public AimingLineVertical(MGame game, Map map) : base("AimingLineVertical", game, map,
+        public AimingLineVertical(MGame game, Map map) 
+            : base("AimingLineVertical", game, map,
             MTextureManager.Ins["AimingLineVertical"].PlayAnimation())
         {
 

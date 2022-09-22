@@ -14,6 +14,8 @@ global using Mythonia.Sturctures;
 global using Mythonia.Game;
 
 global using Mythonia.Game.Sprites;
+global using Mythonia.Game.Sprites.Modules;
+global using Mythonia.Game.Sprites.UI;
 global using Mythonia.Game.Sprites.Sceneries;
 global using Mythonia.Game.Sprites.Projectiles;
 global using Mythonia.Game.Sprites.Effects;

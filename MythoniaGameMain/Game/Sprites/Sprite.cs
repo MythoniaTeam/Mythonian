@@ -5,7 +5,10 @@
 
 namespace Mythonia.Game.Sprites
 {
-    public class Sprite : DrawableGameComponent
+    /// <summary>
+    /// 有位置、能够被绘制的对象
+    /// </summary>
+    public abstract class Sprite : DrawableGameComponent
     {
         #region Prop
         public string Name { get; init; }
@@ -15,7 +18,7 @@ namespace Mythonia.Game.Sprites
 
 
         public ITexture Texture { get; protected set; }
-        public virtual Rectangle TextureSourceRange => Texture.GetSourceRange();
+        //public virtual Rectangle TextureSourceRange => Texture.GetSourceRange();
 
         protected MVec3 _position;
         protected Angle _direction;
@@ -36,12 +39,12 @@ namespace Mythonia.Game.Sprites
 
         #region Constructors
 
-        public Sprite(string name, MGame game, Map map, ITexture texture, MVec3? position = null) : base(game)
+        public Sprite(string name, MGame game, Map map, ITexture texture, Transform transform = default) : base(game)
         {
             Map = map;
             Name = name;
             Texture = texture;
-            _position = position ?? (0, 0, 0);
+            Transform = transform;
         }
 
         #endregion
@@ -52,15 +55,17 @@ namespace Mythonia.Game.Sprites
 
         public override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime);
+            //base.Draw(gameTime);
             DrawTexture(MGame.SpriteBatch, MGame.Main.Camera);
         }
 
-        public virtual void DrawTexture(SpriteBatch spriteBatch = null, Camera camera = null)
+        public virtual void DrawTexture(SpriteBatch spriteBatch, Camera camera)
         {
-            spriteBatch ??= MGame.SpriteBatch;
-            camera ??= MGame.Main.Camera;
-            Texture.Draw(spriteBatch, camera, TextureSourceRange, Transform);
+            Texture.Draw(spriteBatch, camera, Transform);
+        }
+        public virtual void DrawTexture(SpriteBatch spriteBatch)
+        {
+            Texture.Draw(spriteBatch, Transform);
         }
 
         #endregion

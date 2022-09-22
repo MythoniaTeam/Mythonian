@@ -2,7 +2,7 @@
 
 
 
-namespace Mythonia.Game.Sprites
+namespace Mythonia.Game.Sprites.Modules
 {
     public struct Transform
     {

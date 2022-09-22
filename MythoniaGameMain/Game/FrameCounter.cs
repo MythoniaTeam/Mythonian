@@ -8,14 +8,21 @@ namespace Mythonia.Game
 {
     public class FrameCounter : DrawableGameComponent
     {
+        public static FrameCounter Ins { get; private set; } = null;
+
         public FrameCounter(MGame game) : base(game)
         {
+            Ins ??= this;
         }
+
+        public int FrameCount { get; private set; } = 0;
+
 
         public long TotalFrames { get; private set; }
         public float TotalSeconds { get; private set; }
         public float AverageFramesPerSecond { get; private set; }
         public float CurrentFramesPerSecond { get; private set; }
+
 
         public const int MAXIMUM_SAMPLES = 100;
 
@@ -25,7 +32,15 @@ namespace Mythonia.Game
 
         public override void Initialize()
         {
+            UpdateOrder = -1;
             _timeRecord = DateTime.Now;
+        }
+
+
+        
+        public override void Update(GameTime gameTime)
+        {
+            FrameCount++;
         }
 
         public override void Draw(GameTime gameTime)

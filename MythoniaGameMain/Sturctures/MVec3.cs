@@ -61,6 +61,11 @@ namespace Mythonia.Sturctures
         }
         public MVec3 ChangeNew(float? x = null, float? y = null, float? z = null) => Clone().Change(x, y, z);
 
+        public MVec3 RotationXY(Angle rotation)
+        {
+            return new(((MVec2)this).Rotation(rotation), Z);
+        }
+
 
         #endregion Methods
 

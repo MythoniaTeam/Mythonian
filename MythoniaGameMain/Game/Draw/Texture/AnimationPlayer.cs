@@ -17,6 +17,8 @@ namespace Mythonia.Game.Draw.Texture
         public MVec2 Size => Texture.Size;
 
         private float _timeCount;
+
+#pragma warning disable IDE0052 // Remove unread private members
         private float TimeCount
         {
             get => _timeCount;
@@ -41,6 +43,8 @@ namespace Mythonia.Game.Draw.Texture
                 }
             }
         }
+#pragma warning restore IDE0052 // Remove unread private members
+
         private int CurrentFrameNo
         {
             get => _currentFrameNo;
@@ -100,10 +104,17 @@ namespace Mythonia.Game.Draw.Texture
             
         }
 
-        public void Draw(SpriteBatch spriteBatch, Camera camera, Rectangle sourceRange, Transform transform)
+        public void Draw(SpriteBatch spriteBatch, Camera camera, Transform transform)
         {
-            var (screenPos, screenDirection, scale) = camera.Transform(transform).ToTuple;
-            
+            Draw(spriteBatch, camera.Transform(transform));
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Transform transform)
+        {
+            var (screenPos, screenDirection, scale) = /*camera.Transform(transform)*/transform.ToTuple;
+
+            var sourceRange = GetSourceRange();
+
             spriteBatch.Draw(RawTexture,
                 (MVec2)screenPos,
                 sourceRange,
