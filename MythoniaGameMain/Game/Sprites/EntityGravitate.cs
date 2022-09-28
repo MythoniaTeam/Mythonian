@@ -68,7 +68,7 @@ namespace Mythonia.Game.Sprites
 
 
 
-        public EntityGravitate(string name, EntityType type, MGame game, Map map, ITexture texture, Transform transform = default, bool addToList = true) 
+        public EntityGravitate(string name, EntityType type, MGame game, Map map, ITexture texture, Transform? transform = null, bool addToList = true) 
             : base(name, type, game, map, texture, transform, addToList)
         {
         }

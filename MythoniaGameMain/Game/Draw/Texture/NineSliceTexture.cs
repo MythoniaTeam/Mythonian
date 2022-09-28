@@ -10,10 +10,12 @@ namespace Mythonia.Game.Draw.Texture
 
         public MVec2 MidSize { get; set; }
 
-        protected NineSliceTexture(MGame game, Texture2D rawTexture, string name, MVec2 size, 
+        public UI BoundedUI { get; set; }
+
+        protected NineSliceTexture(MGame game, Texture2D rawTexture, string name, MVec2 size, MVec2 originRatio,
             NamedList<Frame> frames, NamedList<AnimationMeta> animations,
             MVec2 borderSize, MVec2 midSize)
-            : base(game, rawTexture, name, size, frames, animations)
+            : base(game, rawTexture, name, size, originRatio, frames, animations)
         {
             BorderSize = borderSize;
             MidSize = midSize;
@@ -35,7 +37,7 @@ namespace Mythonia.Game.Draw.Texture
                         y == 0 ? MidSize.Y : BorderSize.Y
                     );
 
-                    Frames.Add(new($"{x},{y}", new(position - size / 2, size)));
+                    Frames.Add(new($"{x},{-y}", new(position - size / 2, size)));
 
                 };
             };
@@ -49,7 +51,18 @@ namespace Mythonia.Game.Draw.Texture
 
         public override void Draw(SpriteBatch spriteBatch, Transform transform)
         {
-            
+            if(Name == "UI/HealthBar")
+            {
+                int a = 1;
+            }
+            MVec2 originRatioRecord = OriginRatio;
+
+            OriginRatio = MVec2.Center;
+
+            MVec2 requiredMidSize = BoundedUI.Size - BorderSize * 2;
+            transform.Scale = requiredMidSize / MidSize;
+            transform.Position -= BoundedUI.OriginDisplacement;
+
             for (int y = -1; y <= 1; y++)
             {
                 for (int x = -1; x <= 1; x++)
@@ -57,7 +70,7 @@ namespace Mythonia.Game.Draw.Texture
 
                     PlayFrame($"{x},{y}");
 
-                    MVec3 position = transform.Position + (MidSize * transform.Scale + BorderSize) * (x, y) / 2;
+                    MVec3 position = transform.Position + (requiredMidSize + BorderSize) / 2 * (x, y);
                     MVec2 scale = (
                         x == 0 ? transform.Scale.X : 1,
                         y == 0 ? transform.Scale.Y : 1
@@ -66,10 +79,12 @@ namespace Mythonia.Game.Draw.Texture
                     position.RotationXY(transform.Direction);
                     var transform2 = new Transform(position, transform.Direction, scale);
 
-                    base.Draw(spriteBatch, transform2);
+                    ITexture.Draw(this, spriteBatch, transform2);
 
                 };
             };
+            OriginRatio = originRatioRecord;
+
         }
 
         //private Rectangle _sourceRange;
@@ -80,7 +95,7 @@ namespace Mythonia.Game.Draw.Texture
 
         public new NineSliceTexture Clone()
         {
-            return new NineSliceTexture(MGame, RawTexture, Name, Size, Frames, Animations, BorderSize, MidSize);
+            return new NineSliceTexture(MGame, RawTexture, Name, Size, OriginRatio, Frames, Animations, BorderSize, MidSize);
         }
         object ICloneable.Clone() => Clone();
 

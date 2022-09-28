@@ -12,8 +12,8 @@ namespace Mythonia.Game.Physics
 
         private readonly Func<MVec2> _getPosMethod;
 
-        public MVec2 Size { get; set; }
-
+        public MVec2 Size => _getSizeMethod(); //{ get; set; }
+        private readonly Func<MVec2> _getSizeMethod;
 
         public MVec2 BottomLeft => Position - Size / 2;
         public MVec2 TopRight => Position + Size / 2;
@@ -21,11 +21,11 @@ namespace Mythonia.Game.Physics
         public IHitbox.Types Type { get; private set; }
 
 
-        public RectangleHitbox(MGame game, Func<MVec2> getposmethod, MVec2 size, IHitbox.Types type)
+        public RectangleHitbox(MGame game, Func<MVec2> getPosMethod, Func<MVec2> getSizeMethod, IHitbox.Types type)
         {
             MGame = game;
-            _getPosMethod = getposmethod;
-            Size = size;
+            _getPosMethod = getPosMethod;
+            _getSizeMethod = getSizeMethod;
             Type = type;
         }
 

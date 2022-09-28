@@ -23,10 +23,15 @@ namespace Mythonia.Game.Draw.Texture
 
             Add(new TileTexture(MGame, Content, "Tile", TileSize));
 
-            Add(new NineSliceTexture(MGame, Content, "TestNineSlice", (24, 16)));
+            Add(new NineSliceTexture(MGame, Content, "UI/TestNineSlice", (24, 16)));
+
+            Add(new NineSliceTexture(MGame, Content, "UI/HealthBar", (2, 2)));
+            Add(new MTexture(MGame, Content, "UI/HealthBar_Border"));
+            Add(new MTexture(MGame, Content, "UI/HealthBar_Heart").SecTexture(15).AddAnimation(delay: 30));
+
 
             Add(new MTexture(MGame, Content, "TestPlayer"));
-            Add(new MTexture(MGame, Content, "BouncingBomb").SecTexture(4).AddAnimation());
+            Add(new MTexture(MGame, Content, "BouncingBomb").SecTexture(4).AddAnimation(/*delay: 100*/));
             Add(new MTexture(MGame, Content, "PressurePlate", new (string, Rectangle)[]
             {
                 ("Plate", new(0, 0, 32, 6)),

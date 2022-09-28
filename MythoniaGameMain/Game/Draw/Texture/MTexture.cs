@@ -15,7 +15,7 @@ namespace Mythonia.Game.Draw.Texture
         /// <summary>
         /// 单帧图的尺寸 (没有帧图则是整图尺寸)
         /// </summary>
-        public MVec2 Size { get; protected set; }
+        public MVec2 Size { get; set; }
         public float Width => Size.X;
         public float Height => Size.Y;
 
@@ -28,11 +28,12 @@ namespace Mythonia.Game.Draw.Texture
         public NamedList<AnimationMeta> Animations { get; init; } = new();
 
         public Frame CurrentFrame { get; set; }
+        public MVec2 OriginRatio { get; set; }
 
 
         #region Constructors
 
-        protected MTexture(MGame game, Texture2D rawTexture, string name, MVec2 size, NamedList<Frame> frames, NamedList<AnimationMeta> animations)
+        protected MTexture(MGame game, Texture2D rawTexture, string name, MVec2 size, MVec2 originRatio, NamedList<Frame> frames, NamedList<AnimationMeta> animations)
         {
             Name = name;
             RawTexture = rawTexture;
@@ -40,6 +41,7 @@ namespace Mythonia.Game.Draw.Texture
             Size = size;
             Frames = frames;
             Animations = animations;
+            OriginRatio = originRatio;
             CurrentFrame = Frames[0];
         }
 
@@ -79,6 +81,8 @@ namespace Mythonia.Game.Draw.Texture
         /// <returns><see langword="this"/></returns>
         public MTexture SecTexture(int column, int row = 1, int? no = null, IList<string>? subtexturesname = null)
         {
+            Frames.RemoveAll(_ => true);
+
             Size = (RawTexture.Width / column, RawTexture.Height / row);
 
             no ??= column * row;
@@ -102,12 +106,12 @@ namespace Mythonia.Game.Draw.Texture
         }        
 
 
-        public MTexture AddAnimation(string name, float duration, int[] frames)
+        public MTexture AddAnimation(string name, float duration, float delay, int[] frames)
         {
-            Animations.Add(new(this, name, duration, frames));
+            Animations.Add(new(this, name, duration, delay, frames));
             return this;
         }
-        public MTexture AddAnimation(string name = "Default", float duration = 10, int frameStart = 0, int? frameEnd = null)
+        public MTexture AddAnimation(string name = "Default", float duration = 10, float delay = 0, int frameStart = 0, int? frameEnd = null)
         {
             int frameEnd2 = frameEnd ?? Frames.Count - 1;
             int[] frames = new int[frameEnd2 - frameStart + 1];
@@ -115,23 +119,23 @@ namespace Mythonia.Game.Draw.Texture
             {
                 frames[i] = i + frameStart;
             }
-            AddAnimation(name, duration, frames);
+            AddAnimation(name, duration, delay, frames);
             return this;
         }
-        public MTexture AddAnimations((string name, float duration, int[] frames)[] animations)
+        public MTexture AddAnimations((string name, float duration, float delay, int[] frames)[] animations)
         {
-            foreach(var (name, duration, frames) in animations)
+            foreach(var (name, duration, delay, frames) in animations)
             {
-                AddAnimation(name, duration, frames);
+                AddAnimation(name, duration, delay, frames);
             }
 
             return this;
         }
-        public MTexture AddAnimations(IList<(string name, float duration, int frameStart, int frameEnd)> animations)
+        public MTexture AddAnimations(IList<(string name, float duration, float delay, int frameStart, int frameEnd)> animations)
         {
-            foreach(var (name, duration, frameStart, frameEnd) in animations)
+            foreach(var (name, duration, delay, frameStart, frameEnd) in animations)
             {
-                AddAnimation(name, duration, frameStart, frameEnd);
+                AddAnimation(name, duration, delay, frameStart, frameEnd);
             }
 
             return this;
@@ -162,25 +166,13 @@ namespace Mythonia.Game.Draw.Texture
 
         public virtual void Draw(SpriteBatch spriteBatch, Camera camera, Transform transform)
         {
-            Draw(spriteBatch, camera.Transform(transform));
+            ITexture.Draw(this, spriteBatch, camera, transform);
         }
-
         public virtual void Draw(SpriteBatch spriteBatch, Transform transform)
         {
-            var (screenPos, screenDirection, scale) = transform.ToTuple;
-
-            var sourceRange = GetSourceRange();
-
-            spriteBatch.Draw(RawTexture,
-                (MVec2)screenPos,
-                sourceRange,
-                Color.White,
-                screenDirection.Radian,
-                sourceRange.Size.ToVector2() / 2,
-                scale.Abs,
-                transform.SpriteEffects,
-                0);
+            ITexture.Draw(this, spriteBatch, transform);
         }
+        
 
 
 
@@ -197,7 +189,7 @@ namespace Mythonia.Game.Draw.Texture
 
         public MTexture Clone()
         {
-            return new MTexture(MGame, RawTexture, Name, Size, Frames, Animations);
+            return new MTexture(MGame, RawTexture, Name, Size, OriginRatio, Frames, Animations);
         }
         object ICloneable.Clone() => Clone();
 

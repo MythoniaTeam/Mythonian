@@ -16,6 +16,8 @@ namespace Mythonia.Game.Draw.Texture
 
         public MVec2 Size => Texture.Size;
 
+
+        private bool _delaying = true;
         private float _timeCount;
 
 #pragma warning disable IDE0052 // Remove unread private members
@@ -25,18 +27,30 @@ namespace Mythonia.Game.Draw.Texture
             set
             {
                 _timeCount = value;
-                if (_timeCount >= CurrentAnimation.Duration)
+                if (_delaying)
                 {
-                    //如果播放到最后一帧
+                    //如果达到时间，结束延迟阶段
+                    if(_timeCount >= CurrentAnimation.Delay)
+                    {
+                        _delaying = false;
+                        _timeCount %= CurrentAnimation.Delay;
+                    }
+                }
+                //如果不是在延迟阶段，时间达到下一帧
+                if (!_delaying && _timeCount >= CurrentAnimation.Duration)
+                {
+                    //如果播放到最后一帧，且不循环播放
                     if (CurrentFrameNo + (int)(_timeCount / CurrentAnimation.Duration) >= CurrentAnimation.Length && !RepeatPlaying)
                     {
+                        //调用 event
                         OnFinishPlaying(CurrentAnimation);
+                        //切换到最后一帧，停止播放
                         CurrentFrameNo = CurrentAnimation.Length - 1;
                         PlaySpeed = 0;
                     }
                     else
                     {
-                        //增加帧数
+                        //增加帧数，_timeCount 取余
                         CurrentFrameNo += (int)(_timeCount / CurrentAnimation.Duration);
                         _timeCount %= CurrentAnimation.Duration;
                     }
@@ -50,7 +64,13 @@ namespace Mythonia.Game.Draw.Texture
             get => _currentFrameNo;
             set
             {
-                _currentFrameNo = value % CurrentAnimation.Length;
+                if (!_delaying && CurrentAnimation.Delay > 0 && value >= CurrentAnimation.Length)
+                {
+                    _timeCount = 0;
+                    _delaying = true;
+                    _currentFrameNo = 0;
+                }
+                else _currentFrameNo = value % CurrentAnimation.Length;
             }
         }
         private int _currentFrameNo = 0;
@@ -104,27 +124,6 @@ namespace Mythonia.Game.Draw.Texture
             
         }
 
-        public void Draw(SpriteBatch spriteBatch, Camera camera, Transform transform)
-        {
-            Draw(spriteBatch, camera.Transform(transform));
-        }
-
-        public void Draw(SpriteBatch spriteBatch, Transform transform)
-        {
-            var (screenPos, screenDirection, scale) = /*camera.Transform(transform)*/transform.ToTuple;
-
-            var sourceRange = GetSourceRange();
-
-            spriteBatch.Draw(RawTexture,
-                (MVec2)screenPos,
-                sourceRange,
-                Color.White,
-                screenDirection,
-                Size / 2,
-                scale.Abs,
-                transform.SpriteEffects,
-                0);
-        }
 
         #endregion
 
@@ -133,6 +132,8 @@ namespace Mythonia.Game.Draw.Texture
         #region Implement - ITexture
 
         public Texture2D RawTexture => Texture.RawTexture;
+
+        public MVec2 OriginRatio { get => Texture.OriginRatio; set => Texture.OriginRatio = value; }
 
         public Rectangle GetSourceRange() => CurrentAnimation[CurrentFrameNo];
 

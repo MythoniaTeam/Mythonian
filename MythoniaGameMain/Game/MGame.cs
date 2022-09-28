@@ -100,7 +100,7 @@ namespace Mythonia.Game
         {
             GraphicsDevice.Clear(new(10, 0, 30));
 
-            SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
+            SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.Deferred);
 
 
             base.Draw(gameTime);

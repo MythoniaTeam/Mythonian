@@ -21,7 +21,7 @@ namespace Mythonia.Game.Sprites.Projectiles
             WalkAcc = 0;
             _velocity.X = MaxWalkSpd.Limit(xVel);//MaxWalkSpd;
             _velocity.Y = -10;
-            RectHitbox = new(MGame, () => (MVec2)Position, Texture.Size, IHitbox.Types.Entity);
+            RectHitbox = new(MGame, () => (MVec2)Position, () => Texture.Size, IHitbox.Types.Entity);
 
             Damage = new(10);
         }

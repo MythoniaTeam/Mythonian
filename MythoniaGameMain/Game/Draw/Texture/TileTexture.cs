@@ -65,8 +65,8 @@ namespace Mythonia.Game.Draw.Texture
 
         public Tile BoundedTile { get; set; }
 
-        private TileTexture(MGame game, Texture2D rawTexture, string name, MVec2 size, NamedList<Frame> frames, NamedList<AnimationMeta> animations)
-            : base(game, rawTexture, name, size, frames, animations)
+        private TileTexture(MGame game, Texture2D rawTexture, string name, MVec2 size, MVec2 originRatio, NamedList<Frame> frames, NamedList<AnimationMeta> animations)
+            : base(game, rawTexture, name, size, originRatio, frames, animations)
         {
             
         }
@@ -103,7 +103,7 @@ namespace Mythonia.Game.Draw.Texture
 
         public new TileTexture Clone()
         {
-            return new(MGame, RawTexture, Name, Size, Frames, Animations);
+            return new(MGame, RawTexture, Name, Size, OriginRatio, Frames, Animations);
         }
 
         object ICloneable.Clone() => Clone();

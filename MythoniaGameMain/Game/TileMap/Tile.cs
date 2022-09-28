@@ -33,6 +33,7 @@ namespace Mythonia.Game.TileMap
 
         #region Prop Map
 
+        public Map Map { get; init; }
 
         private readonly MVec2? _mapIndex;
 
@@ -68,11 +69,13 @@ namespace Mythonia.Game.TileMap
         #region Constructor
 
         private Tile(MGame game, int id, Map map, MVec2 index) 
-            : base($"Tile-{index}", game, map, game.TextureManager.Get<TileTexture>("Tile"), new(index * map.TileSizeVec))
+            : base($"Tile-{index}", game, game.TextureManager.Get<TileTexture>("Tile"), new(index * map.TileSizeVec))
         {
             TileTexture.BoundedTile = this;
 
             Id = id;
+
+            Map = map;
             _mapIndex = index;//map?.FindIndex(this);
 
             if (id != 0) HasColl = true; else HasColl = false;

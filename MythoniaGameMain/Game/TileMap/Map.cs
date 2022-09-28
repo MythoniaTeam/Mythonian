@@ -186,8 +186,8 @@ namespace Mythonia.Game.TileMap
                     }
 
                     var hitbox = new RectangleHitbox(MGame, 
-                        () => ((indexTo + indexFr) / 2) * TileSizeVec, 
-                        (indexTo - indexFr + (1, 1)) * TileSizeVec, 
+                        () => ((indexTo + indexFr) / 2) * TileSizeVec,
+                        () => (indexTo - indexFr + (1, 1)) * TileSizeVec, 
                         IHitbox.Types.Rigid);
                     MapHitboxes.Add(hitbox);
 

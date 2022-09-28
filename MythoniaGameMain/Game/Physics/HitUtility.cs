@@ -64,6 +64,9 @@
             throw new Exception($"An Unknown IHitbox implement type is Given: h1 is [{h1.GetType()}], h2 is [{h2.GetType()}]");
         }
 
+        public static bool IsHit(RectangleHitbox rect, MVec2 p)
+            => (rect.Position - p).Abs < rect.Size / 2;
+
         public static bool IsHit(RectangleHitbox rect1, RectangleHitbox rect2)
             => (rect1.Position - rect2.Position).Abs < (rect1.Size + rect2.Size) / 2;
 

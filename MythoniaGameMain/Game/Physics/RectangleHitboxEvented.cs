@@ -16,7 +16,7 @@ namespace Mythonia.Game.Physics
         }
 
 
-        public RectangleHitboxEvented(MGame game, Func<MVec2> getposmethod, MVec2 size, IHitbox.Types type) : base(game, getposmethod, size, type)
+        public RectangleHitboxEvented(MGame game, Func<MVec2> getPosMethod, Func<MVec2> getSizeMethod, IHitbox.Types type) : base(game, getPosMethod, getSizeMethod, type)
         {
 
         }

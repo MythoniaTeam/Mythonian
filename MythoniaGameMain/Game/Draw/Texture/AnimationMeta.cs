@@ -19,6 +19,11 @@ namespace Mythonia.Game.Draw.Texture
         public float Duration { get; init; }
 
         /// <summary>
+        /// 开始播放，和循环播放之间的间隔时间
+        /// </summary>
+        public float Delay { get; init; }
+
+        /// <summary>
         /// 动画包含的帧数
         /// </summary>
         public int Length => FramesNo.Length;
@@ -31,10 +36,11 @@ namespace Mythonia.Game.Draw.Texture
 
         public Rectangle this[int index] => Texture.Frames[FramesNo[index]].Range;
 
-        public AnimationMeta(MTexture texture, string name, float duration, int[] frames)
+        public AnimationMeta(MTexture texture, string name, float duration, float delay, int[] frames)
         {
             Name = name;
             Texture = texture;
+            Delay = delay;
             Duration = duration;
             FramesNo = frames;
         }

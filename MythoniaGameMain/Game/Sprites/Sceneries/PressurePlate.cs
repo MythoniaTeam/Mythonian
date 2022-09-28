@@ -30,7 +30,7 @@ namespace Mythonia.Game.Sprites.Sceneries
             game.Components.Add(Plate);
             position.Change(y: -3);
             MTexture.PlayFrame("BaseInactive");
-            HitboxRect = new RectangleHitbox(MGame, () => position, (32, 10), IHitbox.Types.Rigid);
+            HitboxRect = new RectangleHitbox(MGame, () => position, () => (32, 10), IHitbox.Types.Rigid);
             Plate.HitboxEvented.WhenBeStepped += PressurePlate_HitboxEvented_WhenBeStepped;
         }
 
@@ -76,7 +76,7 @@ namespace Mythonia.Game.Sprites.Sceneries
                 : base("PressurePlate", EntityType.Scenery, game, map, game.TextureManager["PressurePlate"].PlayFrame("Plate"), new(position.Change(y: 5)))
             {
                 _originPosY = Position.Y;
-                HitboxEvented = new RectangleHitboxEvented(MGame, () => (MVec2)Position, (24, 6), IHitbox.Types.Rigid);
+                HitboxEvented = new RectangleHitboxEvented(MGame, () => (MVec2)Position, () => (24, 6), IHitbox.Types.Rigid);
                 HitboxEvented.WhenBeStepped += HitboxEvented_WhenBeStepped;
 
                 TextManager.Ins.WriteLine(() => $"Pressure Plate Activate: {Activate}");

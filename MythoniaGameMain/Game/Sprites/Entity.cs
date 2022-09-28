@@ -7,6 +7,9 @@ namespace Mythonia.Game.Sprites
     public abstract class Entity : Sprite
     {
         #region Prop
+
+        public Map Map { get; init; }
+
         public MVec2 Velocity { get => _velocity; set => _velocity = value; }
         protected MVec2 _velocity = (0, 0);
 
@@ -21,9 +24,11 @@ namespace Mythonia.Game.Sprites
 
         #region 
 
-        public Entity(string name, EntityType type, MGame game, Map map, ITexture texture, Transform transform = default, bool addToList = true) 
-            : base(name, game, map, texture, transform)
+        public Entity(string name, EntityType type, MGame game, Map map, ITexture texture, Transform? transform = null, bool addToList = true) 
+            : base(name, game, texture, transform)
         {
+            Map = map;
+
             Type = type;
 
             if(addToList) EntitiesManager.Ins.Add(this);

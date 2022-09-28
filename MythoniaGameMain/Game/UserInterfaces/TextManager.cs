@@ -1,6 +1,6 @@
 ﻿
 
-namespace Mythonia.Game.UserInterface
+namespace Mythonia.Game.UserInterfaces
 {
     public class TextManager : DrawableGameComponent
     {
@@ -46,6 +46,7 @@ namespace Mythonia.Game.UserInterface
         {
             DefaultFont = defaultFont;
             if (Ins == null) Ins = this;
+            DrawOrder = 20000;
         }
 
         public void WriteLine(Func<string> text, float? life = null)

@@ -12,7 +12,7 @@ namespace Mythonia.Game.Sprites
         #region Prop
 
 
-        public HealthInfo Health { get; init; } = new(100, 0);
+        public HealthInfo Health { get; init; } = new(80, 0);
 
 
         #region Prop - Physics
@@ -53,7 +53,7 @@ namespace Mythonia.Game.Sprites
             JumpKeyPressAcc = 0.37f;
 
             //Scale = (2, 2);
-            RectHitbox = new(MGame, () => (MVec2)Position, Texture.Size, IHitbox.Types.Entity);
+            RectHitbox = new(MGame, () => (MVec2)Position, () => Texture.Size, IHitbox.Types.Entity);
 
 #if DEBUG
             TextManager.Ins.WriteLine(() => $"Player Vel.X: {MathF.Round(_velocity.X, 2)}");
@@ -64,7 +64,10 @@ namespace Mythonia.Game.Sprites
             Health.HealthPoint = 80;
             Health.Defence = 8;
 
-            //game.Components.Add(new Panel(MGame, Map, new((400, 280, 0), scale: (300, 200))));
+            //game.Components.Add(new Panel(MGame, UIManager.Ins, null, MVec2.Center, (300, 200), (0, 0) ));
+            HealthBar healthBar = new(MGame, UIManager.Ins, () => Health.HealthPoint, () => Health.HealthMax);
+            MGame.Components.Add(healthBar);
+
 #endif
 
         }
@@ -110,8 +113,8 @@ namespace Mythonia.Game.Sprites
 
             if (key.IsKeyDown(Keys.R))
             {
-                Position = (0, 40, 0);
-                Velocity = (0, 0);
+                _position = (0, 40, 0);
+                _velocity = (0, 0);
             }
 
             if (Input[KeyName.Debug] > 0)

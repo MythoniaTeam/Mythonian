@@ -8,13 +8,12 @@ namespace Mythonia.Game.Sprites
     /// <summary>
     /// 有位置、能够被绘制的对象
     /// </summary>
-    public abstract class Sprite : DrawableGameComponent
+    public abstract class Sprite : DrawableGameComponent, INamed
     {
         #region Prop
         public string Name { get; init; }
 
         public MGame MGame => (MGame)Game;
-        public Map Map { get; init; }
 
 
         public ITexture Texture { get; protected set; }
@@ -23,14 +22,17 @@ namespace Mythonia.Game.Sprites
         protected MVec3 _position;
         protected Angle _direction;
         protected MVec2 _scale = (1, 1);
-        public MVec3 Position { get => _position; set => _position = value; }
-        public Angle Direction { get => _direction; set => _direction = value; }
-        public MVec2 Scale { get => _scale; set => _scale = value; }
+        //protected MVec2 _originRatio;
+        public virtual MVec3 Position { get => _position; /*set => _position = value;*/ }
+        public Angle Direction { get => _direction; /*set => _direction = value;*/ }
+        public MVec2 Scale { get => _scale; /*set => _scale = value;*/ }
+        //public MVec2 OriginRatio { get => _originRatio; set => _originRatio = value; }
+
         
         public Transform Transform
         {
-            get => new(_position, _direction, _scale);
-            set => (_position, _direction, _scale) = value.ToTuple;
+            get => new(Position, Direction, Scale/*, _originRatio*/);
+            //set => (_position, _direction, _scale) = value.ToTuple;
         }
 
         #endregion
@@ -39,12 +41,12 @@ namespace Mythonia.Game.Sprites
 
         #region Constructors
 
-        public Sprite(string name, MGame game, Map map, ITexture texture, Transform transform = default) : base(game)
+        public Sprite(string name, MGame game, ITexture texture, Transform? transform = null) : base(game)
         {
-            Map = map;
             Name = name;
             Texture = texture;
-            Transform = transform;
+            (_position, _direction, _scale) = (transform ?? new Transform(null)).ToTuple;
+
         }
 
         #endregion
@@ -61,11 +63,11 @@ namespace Mythonia.Game.Sprites
 
         public virtual void DrawTexture(SpriteBatch spriteBatch, Camera camera)
         {
-            Texture.Draw(spriteBatch, camera, Transform);
+            Texture?.Draw(spriteBatch, camera, Transform);
         }
         public virtual void DrawTexture(SpriteBatch spriteBatch)
         {
-            Texture.Draw(spriteBatch, Transform);
+            Texture?.Draw(spriteBatch, Transform);
         }
 
         #endregion

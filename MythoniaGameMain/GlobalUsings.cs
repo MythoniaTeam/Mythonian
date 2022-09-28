@@ -15,14 +15,13 @@ global using Mythonia.Game;
 
 global using Mythonia.Game.Sprites;
 global using Mythonia.Game.Sprites.Modules;
-global using Mythonia.Game.Sprites.UI;
 global using Mythonia.Game.Sprites.Sceneries;
 global using Mythonia.Game.Sprites.Projectiles;
 global using Mythonia.Game.Sprites.Effects;
 
 global using Mythonia.Game.Physics;
 global using Mythonia.Game.TileMap;
-global using Mythonia.Game.UserInterface;
+global using Mythonia.Game.UserInterfaces;
 
 global using Mythonia.Game.Draw;
 global using Mythonia.Game.Draw.Pen;

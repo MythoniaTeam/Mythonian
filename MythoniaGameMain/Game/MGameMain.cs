@@ -13,6 +13,7 @@ namespace Mythonia.Game
 
         public Input Input { get; init; }
         public TextManager Text { get; init; }
+        public UIManager UserInterface { get; init; }
         public Pen Pen { get; set; }
 
 
@@ -31,6 +32,7 @@ namespace Mythonia.Game
 
             var font = MGame.Content.Load<SpriteFont>("Fonts/Default");
             Text = new TextManager(MGame, font);
+            UserInterface = new UIManager(MGame);
 
 
             /*
@@ -91,6 +93,7 @@ namespace Mythonia.Game
             MGame.Components.Add(Player);
             MGame.Components.Add(Text);
             MGame.Components.Add(Pen);
+            MGame.Components.Add(UserInterface);
         }
     }
 }

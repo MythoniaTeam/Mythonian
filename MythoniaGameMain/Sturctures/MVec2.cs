@@ -34,6 +34,16 @@ namespace Mythonia.Sturctures
         public (float X, float Y) ToFloat => (X, Y);
 
 
+        public readonly static MVec2 TopLeft     = new(-1,  1);
+        public readonly static MVec2 Top         = new( 0,  1);
+        public readonly static MVec2 TopRight    = new( 1,  1);
+        public readonly static MVec2 Left        = new(-1,  0);
+        public readonly static MVec2 Center      = new( 0,  0);
+        public readonly static MVec2 Right       = new( 1,  0);
+        public readonly static MVec2 BottomLeft  = new(-1, -1);
+        public readonly static MVec2 Bottom      = new( 0, -1);
+        public readonly static MVec2 BottomRight = new( 1, -1);
+
 
         #region Constructors
 

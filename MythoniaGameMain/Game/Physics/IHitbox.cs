@@ -10,6 +10,7 @@ namespace Mythonia.Game.Physics
 
         public enum Types
         {
+            UI,
             /// <summary>
             /// [刚体] 碰撞时会被推挤，无法穿过 (如图格)
             /// </summary>
@@ -21,7 +22,7 @@ namespace Mythonia.Game.Physics
             /// <summary>
             /// [触发器] 不会推挤
             /// </summary>
-            Trigger
+            Trigger,
         }
 
         public Types Type { get; }
